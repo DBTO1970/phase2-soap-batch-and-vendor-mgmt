@@ -1,0 +1,36 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma/client"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// prisma/schema.prisma
+
+model SoapBatch {
+  id                    Int      @id @default(autoincrement())
+  sheetId               String   @unique
+  onHandLabeled         Int      @default(0)
+  onHandUnlabeled       Int      @default(0)
+  madeDate              DateTime
+  readyDate             DateTime
+  name                  String
+  recipe                String?
+  waterOz               Float?
+  additionalIngredients String?
+  fragranceOil          String?
+  fragranceAmountOz     Float?
+  colorDesign           String?
+  oilTemp               Float?
+  lyeTemp               Float?
+  notes                 String?
+  updatedAt             DateTime @updatedAt
+}

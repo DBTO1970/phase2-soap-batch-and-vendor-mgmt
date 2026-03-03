@@ -16,14 +16,14 @@ datasource db {
 // prisma/schema.prisma
 
 model SoapBatch {
-  id                    Int      @id @default(autoincrement())
-  sheetId               String   @unique
+  id                    String   @id @default(cuid())
+  sheetId               String   @unique  // This matches your 'where' clause
+  name                  String
+  recipe                String?
   onHandLabeled         Int      @default(0)
   onHandUnlabeled       Int      @default(0)
   madeDate              DateTime
   readyDate             DateTime
-  name                  String
-  recipe                String?
   waterOz               Float?
   additionalIngredients String?
   fragranceOil          String?

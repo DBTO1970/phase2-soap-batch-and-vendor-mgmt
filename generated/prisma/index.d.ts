@@ -879,7 +879,6 @@ export namespace Prisma {
   }
 
   export type SoapBatchAvgAggregateOutputType = {
-    id: number | null
     onHandLabeled: number | null
     onHandUnlabeled: number | null
     waterOz: number | null
@@ -889,7 +888,6 @@ export namespace Prisma {
   }
 
   export type SoapBatchSumAggregateOutputType = {
-    id: number | null
     onHandLabeled: number | null
     onHandUnlabeled: number | null
     waterOz: number | null
@@ -899,14 +897,14 @@ export namespace Prisma {
   }
 
   export type SoapBatchMinAggregateOutputType = {
-    id: number | null
+    id: string | null
     sheetId: string | null
+    name: string | null
+    recipe: string | null
     onHandLabeled: number | null
     onHandUnlabeled: number | null
     madeDate: Date | null
     readyDate: Date | null
-    name: string | null
-    recipe: string | null
     waterOz: number | null
     additionalIngredients: string | null
     fragranceOil: string | null
@@ -919,14 +917,14 @@ export namespace Prisma {
   }
 
   export type SoapBatchMaxAggregateOutputType = {
-    id: number | null
+    id: string | null
     sheetId: string | null
+    name: string | null
+    recipe: string | null
     onHandLabeled: number | null
     onHandUnlabeled: number | null
     madeDate: Date | null
     readyDate: Date | null
-    name: string | null
-    recipe: string | null
     waterOz: number | null
     additionalIngredients: string | null
     fragranceOil: string | null
@@ -941,12 +939,12 @@ export namespace Prisma {
   export type SoapBatchCountAggregateOutputType = {
     id: number
     sheetId: number
+    name: number
+    recipe: number
     onHandLabeled: number
     onHandUnlabeled: number
     madeDate: number
     readyDate: number
-    name: number
-    recipe: number
     waterOz: number
     additionalIngredients: number
     fragranceOil: number
@@ -961,7 +959,6 @@ export namespace Prisma {
 
 
   export type SoapBatchAvgAggregateInputType = {
-    id?: true
     onHandLabeled?: true
     onHandUnlabeled?: true
     waterOz?: true
@@ -971,7 +968,6 @@ export namespace Prisma {
   }
 
   export type SoapBatchSumAggregateInputType = {
-    id?: true
     onHandLabeled?: true
     onHandUnlabeled?: true
     waterOz?: true
@@ -983,12 +979,12 @@ export namespace Prisma {
   export type SoapBatchMinAggregateInputType = {
     id?: true
     sheetId?: true
+    name?: true
+    recipe?: true
     onHandLabeled?: true
     onHandUnlabeled?: true
     madeDate?: true
     readyDate?: true
-    name?: true
-    recipe?: true
     waterOz?: true
     additionalIngredients?: true
     fragranceOil?: true
@@ -1003,12 +999,12 @@ export namespace Prisma {
   export type SoapBatchMaxAggregateInputType = {
     id?: true
     sheetId?: true
+    name?: true
+    recipe?: true
     onHandLabeled?: true
     onHandUnlabeled?: true
     madeDate?: true
     readyDate?: true
-    name?: true
-    recipe?: true
     waterOz?: true
     additionalIngredients?: true
     fragranceOil?: true
@@ -1023,12 +1019,12 @@ export namespace Prisma {
   export type SoapBatchCountAggregateInputType = {
     id?: true
     sheetId?: true
+    name?: true
+    recipe?: true
     onHandLabeled?: true
     onHandUnlabeled?: true
     madeDate?: true
     readyDate?: true
-    name?: true
-    recipe?: true
     waterOz?: true
     additionalIngredients?: true
     fragranceOil?: true
@@ -1128,14 +1124,14 @@ export namespace Prisma {
   }
 
   export type SoapBatchGroupByOutputType = {
-    id: number
+    id: string
     sheetId: string
-    onHandLabeled: number
-    onHandUnlabeled: number
-    madeDate: Date
-    readyDate: Date
     name: string
     recipe: string | null
+    onHandLabeled: number | null
+    onHandUnlabeled: number | null
+    madeDate: Date | null
+    readyDate: Date | null
     waterOz: number | null
     additionalIngredients: string | null
     fragranceOil: string | null
@@ -1169,12 +1165,12 @@ export namespace Prisma {
   export type SoapBatchSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     sheetId?: boolean
+    name?: boolean
+    recipe?: boolean
     onHandLabeled?: boolean
     onHandUnlabeled?: boolean
     madeDate?: boolean
     readyDate?: boolean
-    name?: boolean
-    recipe?: boolean
     waterOz?: boolean
     additionalIngredients?: boolean
     fragranceOil?: boolean
@@ -1189,12 +1185,12 @@ export namespace Prisma {
   export type SoapBatchSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     sheetId?: boolean
+    name?: boolean
+    recipe?: boolean
     onHandLabeled?: boolean
     onHandUnlabeled?: boolean
     madeDate?: boolean
     readyDate?: boolean
-    name?: boolean
-    recipe?: boolean
     waterOz?: boolean
     additionalIngredients?: boolean
     fragranceOil?: boolean
@@ -1209,12 +1205,12 @@ export namespace Prisma {
   export type SoapBatchSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     sheetId?: boolean
+    name?: boolean
+    recipe?: boolean
     onHandLabeled?: boolean
     onHandUnlabeled?: boolean
     madeDate?: boolean
     readyDate?: boolean
-    name?: boolean
-    recipe?: boolean
     waterOz?: boolean
     additionalIngredients?: boolean
     fragranceOil?: boolean
@@ -1229,12 +1225,12 @@ export namespace Prisma {
   export type SoapBatchSelectScalar = {
     id?: boolean
     sheetId?: boolean
+    name?: boolean
+    recipe?: boolean
     onHandLabeled?: boolean
     onHandUnlabeled?: boolean
     madeDate?: boolean
     readyDate?: boolean
-    name?: boolean
-    recipe?: boolean
     waterOz?: boolean
     additionalIngredients?: boolean
     fragranceOil?: boolean
@@ -1246,20 +1242,20 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type SoapBatchOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "sheetId" | "onHandLabeled" | "onHandUnlabeled" | "madeDate" | "readyDate" | "name" | "recipe" | "waterOz" | "additionalIngredients" | "fragranceOil" | "fragranceAmountOz" | "colorDesign" | "oilTemp" | "lyeTemp" | "notes" | "updatedAt", ExtArgs["result"]["soapBatch"]>
+  export type SoapBatchOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "sheetId" | "name" | "recipe" | "onHandLabeled" | "onHandUnlabeled" | "madeDate" | "readyDate" | "waterOz" | "additionalIngredients" | "fragranceOil" | "fragranceAmountOz" | "colorDesign" | "oilTemp" | "lyeTemp" | "notes" | "updatedAt", ExtArgs["result"]["soapBatch"]>
 
   export type $SoapBatchPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "SoapBatch"
     objects: {}
     scalars: $Extensions.GetPayloadResult<{
-      id: number
+      id: string
       sheetId: string
-      onHandLabeled: number
-      onHandUnlabeled: number
-      madeDate: Date
-      readyDate: Date
       name: string
       recipe: string | null
+      onHandLabeled: number | null
+      onHandUnlabeled: number | null
+      madeDate: Date | null
+      readyDate: Date | null
       waterOz: number | null
       additionalIngredients: string | null
       fragranceOil: string | null
@@ -1692,14 +1688,14 @@ export namespace Prisma {
    * Fields of the SoapBatch model
    */
   interface SoapBatchFieldRefs {
-    readonly id: FieldRef<"SoapBatch", 'Int'>
+    readonly id: FieldRef<"SoapBatch", 'String'>
     readonly sheetId: FieldRef<"SoapBatch", 'String'>
+    readonly name: FieldRef<"SoapBatch", 'String'>
+    readonly recipe: FieldRef<"SoapBatch", 'String'>
     readonly onHandLabeled: FieldRef<"SoapBatch", 'Int'>
     readonly onHandUnlabeled: FieldRef<"SoapBatch", 'Int'>
     readonly madeDate: FieldRef<"SoapBatch", 'DateTime'>
     readonly readyDate: FieldRef<"SoapBatch", 'DateTime'>
-    readonly name: FieldRef<"SoapBatch", 'String'>
-    readonly recipe: FieldRef<"SoapBatch", 'String'>
     readonly waterOz: FieldRef<"SoapBatch", 'Float'>
     readonly additionalIngredients: FieldRef<"SoapBatch", 'String'>
     readonly fragranceOil: FieldRef<"SoapBatch", 'String'>
@@ -2092,12 +2088,12 @@ export namespace Prisma {
   export const SoapBatchScalarFieldEnum: {
     id: 'id',
     sheetId: 'sheetId',
+    name: 'name',
+    recipe: 'recipe',
     onHandLabeled: 'onHandLabeled',
     onHandUnlabeled: 'onHandUnlabeled',
     madeDate: 'madeDate',
     readyDate: 'readyDate',
-    name: 'name',
-    recipe: 'recipe',
     waterOz: 'waterOz',
     additionalIngredients: 'additionalIngredients',
     fragranceOil: 'fragranceOil',
@@ -2142,20 +2138,6 @@ export namespace Prisma {
 
 
   /**
-   * Reference to a field of type 'Int'
-   */
-  export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
-    
-
-
-  /**
-   * Reference to a field of type 'Int[]'
-   */
-  export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
-    
-
-
-  /**
    * Reference to a field of type 'String'
    */
   export type StringFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'String'>
@@ -2166,6 +2148,20 @@ export namespace Prisma {
    * Reference to a field of type 'String[]'
    */
   export type ListStringFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'String[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'Int'
+   */
+  export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
+    
+
+
+  /**
+   * Reference to a field of type 'Int[]'
+   */
+  export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
     
 
 
@@ -2204,14 +2200,14 @@ export namespace Prisma {
     AND?: SoapBatchWhereInput | SoapBatchWhereInput[]
     OR?: SoapBatchWhereInput[]
     NOT?: SoapBatchWhereInput | SoapBatchWhereInput[]
-    id?: IntFilter<"SoapBatch"> | number
+    id?: StringFilter<"SoapBatch"> | string
     sheetId?: StringFilter<"SoapBatch"> | string
-    onHandLabeled?: IntFilter<"SoapBatch"> | number
-    onHandUnlabeled?: IntFilter<"SoapBatch"> | number
-    madeDate?: DateTimeFilter<"SoapBatch"> | Date | string
-    readyDate?: DateTimeFilter<"SoapBatch"> | Date | string
     name?: StringFilter<"SoapBatch"> | string
     recipe?: StringNullableFilter<"SoapBatch"> | string | null
+    onHandLabeled?: IntNullableFilter<"SoapBatch"> | number | null
+    onHandUnlabeled?: IntNullableFilter<"SoapBatch"> | number | null
+    madeDate?: DateTimeNullableFilter<"SoapBatch"> | Date | string | null
+    readyDate?: DateTimeNullableFilter<"SoapBatch"> | Date | string | null
     waterOz?: FloatNullableFilter<"SoapBatch"> | number | null
     additionalIngredients?: StringNullableFilter<"SoapBatch"> | string | null
     fragranceOil?: StringNullableFilter<"SoapBatch"> | string | null
@@ -2226,12 +2222,12 @@ export namespace Prisma {
   export type SoapBatchOrderByWithRelationInput = {
     id?: SortOrder
     sheetId?: SortOrder
-    onHandLabeled?: SortOrder
-    onHandUnlabeled?: SortOrder
-    madeDate?: SortOrder
-    readyDate?: SortOrder
     name?: SortOrder
     recipe?: SortOrderInput | SortOrder
+    onHandLabeled?: SortOrderInput | SortOrder
+    onHandUnlabeled?: SortOrderInput | SortOrder
+    madeDate?: SortOrderInput | SortOrder
+    readyDate?: SortOrderInput | SortOrder
     waterOz?: SortOrderInput | SortOrder
     additionalIngredients?: SortOrderInput | SortOrder
     fragranceOil?: SortOrderInput | SortOrder
@@ -2244,17 +2240,17 @@ export namespace Prisma {
   }
 
   export type SoapBatchWhereUniqueInput = Prisma.AtLeast<{
-    id?: number
+    id?: string
     sheetId?: string
     AND?: SoapBatchWhereInput | SoapBatchWhereInput[]
     OR?: SoapBatchWhereInput[]
     NOT?: SoapBatchWhereInput | SoapBatchWhereInput[]
-    onHandLabeled?: IntFilter<"SoapBatch"> | number
-    onHandUnlabeled?: IntFilter<"SoapBatch"> | number
-    madeDate?: DateTimeFilter<"SoapBatch"> | Date | string
-    readyDate?: DateTimeFilter<"SoapBatch"> | Date | string
     name?: StringFilter<"SoapBatch"> | string
     recipe?: StringNullableFilter<"SoapBatch"> | string | null
+    onHandLabeled?: IntNullableFilter<"SoapBatch"> | number | null
+    onHandUnlabeled?: IntNullableFilter<"SoapBatch"> | number | null
+    madeDate?: DateTimeNullableFilter<"SoapBatch"> | Date | string | null
+    readyDate?: DateTimeNullableFilter<"SoapBatch"> | Date | string | null
     waterOz?: FloatNullableFilter<"SoapBatch"> | number | null
     additionalIngredients?: StringNullableFilter<"SoapBatch"> | string | null
     fragranceOil?: StringNullableFilter<"SoapBatch"> | string | null
@@ -2269,12 +2265,12 @@ export namespace Prisma {
   export type SoapBatchOrderByWithAggregationInput = {
     id?: SortOrder
     sheetId?: SortOrder
-    onHandLabeled?: SortOrder
-    onHandUnlabeled?: SortOrder
-    madeDate?: SortOrder
-    readyDate?: SortOrder
     name?: SortOrder
     recipe?: SortOrderInput | SortOrder
+    onHandLabeled?: SortOrderInput | SortOrder
+    onHandUnlabeled?: SortOrderInput | SortOrder
+    madeDate?: SortOrderInput | SortOrder
+    readyDate?: SortOrderInput | SortOrder
     waterOz?: SortOrderInput | SortOrder
     additionalIngredients?: SortOrderInput | SortOrder
     fragranceOil?: SortOrderInput | SortOrder
@@ -2295,14 +2291,14 @@ export namespace Prisma {
     AND?: SoapBatchScalarWhereWithAggregatesInput | SoapBatchScalarWhereWithAggregatesInput[]
     OR?: SoapBatchScalarWhereWithAggregatesInput[]
     NOT?: SoapBatchScalarWhereWithAggregatesInput | SoapBatchScalarWhereWithAggregatesInput[]
-    id?: IntWithAggregatesFilter<"SoapBatch"> | number
+    id?: StringWithAggregatesFilter<"SoapBatch"> | string
     sheetId?: StringWithAggregatesFilter<"SoapBatch"> | string
-    onHandLabeled?: IntWithAggregatesFilter<"SoapBatch"> | number
-    onHandUnlabeled?: IntWithAggregatesFilter<"SoapBatch"> | number
-    madeDate?: DateTimeWithAggregatesFilter<"SoapBatch"> | Date | string
-    readyDate?: DateTimeWithAggregatesFilter<"SoapBatch"> | Date | string
     name?: StringWithAggregatesFilter<"SoapBatch"> | string
     recipe?: StringNullableWithAggregatesFilter<"SoapBatch"> | string | null
+    onHandLabeled?: IntNullableWithAggregatesFilter<"SoapBatch"> | number | null
+    onHandUnlabeled?: IntNullableWithAggregatesFilter<"SoapBatch"> | number | null
+    madeDate?: DateTimeNullableWithAggregatesFilter<"SoapBatch"> | Date | string | null
+    readyDate?: DateTimeNullableWithAggregatesFilter<"SoapBatch"> | Date | string | null
     waterOz?: FloatNullableWithAggregatesFilter<"SoapBatch"> | number | null
     additionalIngredients?: StringNullableWithAggregatesFilter<"SoapBatch"> | string | null
     fragranceOil?: StringNullableWithAggregatesFilter<"SoapBatch"> | string | null
@@ -2315,13 +2311,14 @@ export namespace Prisma {
   }
 
   export type SoapBatchCreateInput = {
+    id?: string
     sheetId: string
-    onHandLabeled?: number
-    onHandUnlabeled?: number
-    madeDate: Date | string
-    readyDate: Date | string
     name: string
     recipe?: string | null
+    onHandLabeled?: number | null
+    onHandUnlabeled?: number | null
+    madeDate?: Date | string | null
+    readyDate?: Date | string | null
     waterOz?: number | null
     additionalIngredients?: string | null
     fragranceOil?: string | null
@@ -2334,14 +2331,14 @@ export namespace Prisma {
   }
 
   export type SoapBatchUncheckedCreateInput = {
-    id?: number
+    id?: string
     sheetId: string
-    onHandLabeled?: number
-    onHandUnlabeled?: number
-    madeDate: Date | string
-    readyDate: Date | string
     name: string
     recipe?: string | null
+    onHandLabeled?: number | null
+    onHandUnlabeled?: number | null
+    madeDate?: Date | string | null
+    readyDate?: Date | string | null
     waterOz?: number | null
     additionalIngredients?: string | null
     fragranceOil?: string | null
@@ -2354,13 +2351,14 @@ export namespace Prisma {
   }
 
   export type SoapBatchUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
     sheetId?: StringFieldUpdateOperationsInput | string
-    onHandLabeled?: IntFieldUpdateOperationsInput | number
-    onHandUnlabeled?: IntFieldUpdateOperationsInput | number
-    madeDate?: DateTimeFieldUpdateOperationsInput | Date | string
-    readyDate?: DateTimeFieldUpdateOperationsInput | Date | string
     name?: StringFieldUpdateOperationsInput | string
     recipe?: NullableStringFieldUpdateOperationsInput | string | null
+    onHandLabeled?: NullableIntFieldUpdateOperationsInput | number | null
+    onHandUnlabeled?: NullableIntFieldUpdateOperationsInput | number | null
+    madeDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    readyDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     waterOz?: NullableFloatFieldUpdateOperationsInput | number | null
     additionalIngredients?: NullableStringFieldUpdateOperationsInput | string | null
     fragranceOil?: NullableStringFieldUpdateOperationsInput | string | null
@@ -2373,14 +2371,14 @@ export namespace Prisma {
   }
 
   export type SoapBatchUncheckedUpdateInput = {
-    id?: IntFieldUpdateOperationsInput | number
+    id?: StringFieldUpdateOperationsInput | string
     sheetId?: StringFieldUpdateOperationsInput | string
-    onHandLabeled?: IntFieldUpdateOperationsInput | number
-    onHandUnlabeled?: IntFieldUpdateOperationsInput | number
-    madeDate?: DateTimeFieldUpdateOperationsInput | Date | string
-    readyDate?: DateTimeFieldUpdateOperationsInput | Date | string
     name?: StringFieldUpdateOperationsInput | string
     recipe?: NullableStringFieldUpdateOperationsInput | string | null
+    onHandLabeled?: NullableIntFieldUpdateOperationsInput | number | null
+    onHandUnlabeled?: NullableIntFieldUpdateOperationsInput | number | null
+    madeDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    readyDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     waterOz?: NullableFloatFieldUpdateOperationsInput | number | null
     additionalIngredients?: NullableStringFieldUpdateOperationsInput | string | null
     fragranceOil?: NullableStringFieldUpdateOperationsInput | string | null
@@ -2393,14 +2391,14 @@ export namespace Prisma {
   }
 
   export type SoapBatchCreateManyInput = {
-    id?: number
+    id?: string
     sheetId: string
-    onHandLabeled?: number
-    onHandUnlabeled?: number
-    madeDate: Date | string
-    readyDate: Date | string
     name: string
     recipe?: string | null
+    onHandLabeled?: number | null
+    onHandUnlabeled?: number | null
+    madeDate?: Date | string | null
+    readyDate?: Date | string | null
     waterOz?: number | null
     additionalIngredients?: string | null
     fragranceOil?: string | null
@@ -2413,13 +2411,14 @@ export namespace Prisma {
   }
 
   export type SoapBatchUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
     sheetId?: StringFieldUpdateOperationsInput | string
-    onHandLabeled?: IntFieldUpdateOperationsInput | number
-    onHandUnlabeled?: IntFieldUpdateOperationsInput | number
-    madeDate?: DateTimeFieldUpdateOperationsInput | Date | string
-    readyDate?: DateTimeFieldUpdateOperationsInput | Date | string
     name?: StringFieldUpdateOperationsInput | string
     recipe?: NullableStringFieldUpdateOperationsInput | string | null
+    onHandLabeled?: NullableIntFieldUpdateOperationsInput | number | null
+    onHandUnlabeled?: NullableIntFieldUpdateOperationsInput | number | null
+    madeDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    readyDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     waterOz?: NullableFloatFieldUpdateOperationsInput | number | null
     additionalIngredients?: NullableStringFieldUpdateOperationsInput | string | null
     fragranceOil?: NullableStringFieldUpdateOperationsInput | string | null
@@ -2432,14 +2431,14 @@ export namespace Prisma {
   }
 
   export type SoapBatchUncheckedUpdateManyInput = {
-    id?: IntFieldUpdateOperationsInput | number
+    id?: StringFieldUpdateOperationsInput | string
     sheetId?: StringFieldUpdateOperationsInput | string
-    onHandLabeled?: IntFieldUpdateOperationsInput | number
-    onHandUnlabeled?: IntFieldUpdateOperationsInput | number
-    madeDate?: DateTimeFieldUpdateOperationsInput | Date | string
-    readyDate?: DateTimeFieldUpdateOperationsInput | Date | string
     name?: StringFieldUpdateOperationsInput | string
     recipe?: NullableStringFieldUpdateOperationsInput | string | null
+    onHandLabeled?: NullableIntFieldUpdateOperationsInput | number | null
+    onHandUnlabeled?: NullableIntFieldUpdateOperationsInput | number | null
+    madeDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    readyDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     waterOz?: NullableFloatFieldUpdateOperationsInput | number | null
     additionalIngredients?: NullableStringFieldUpdateOperationsInput | string | null
     fragranceOil?: NullableStringFieldUpdateOperationsInput | string | null
@@ -2449,17 +2448,6 @@ export namespace Prisma {
     lyeTemp?: NullableFloatFieldUpdateOperationsInput | number | null
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type IntFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[] | ListIntFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntFilter<$PrismaModel> | number
   }
 
   export type StringFilter<$PrismaModel = never> = {
@@ -2477,17 +2465,6 @@ export namespace Prisma {
     not?: NestedStringFilter<$PrismaModel> | string
   }
 
-  export type DateTimeFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeFilter<$PrismaModel> | Date | string
-  }
-
   export type StringNullableFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel> | null
     in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
@@ -2503,6 +2480,28 @@ export namespace Prisma {
     not?: NestedStringNullableFilter<$PrismaModel> | string | null
   }
 
+  export type IntNullableFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableFilter<$PrismaModel> | number | null
+  }
+
+  export type DateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+  }
+
   export type FloatNullableFilter<$PrismaModel = never> = {
     equals?: number | FloatFieldRefInput<$PrismaModel> | null
     in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
@@ -2514,6 +2513,17 @@ export namespace Prisma {
     not?: NestedFloatNullableFilter<$PrismaModel> | number | null
   }
 
+  export type DateTimeFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeFilter<$PrismaModel> | Date | string
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -2522,12 +2532,12 @@ export namespace Prisma {
   export type SoapBatchCountOrderByAggregateInput = {
     id?: SortOrder
     sheetId?: SortOrder
+    name?: SortOrder
+    recipe?: SortOrder
     onHandLabeled?: SortOrder
     onHandUnlabeled?: SortOrder
     madeDate?: SortOrder
     readyDate?: SortOrder
-    name?: SortOrder
-    recipe?: SortOrder
     waterOz?: SortOrder
     additionalIngredients?: SortOrder
     fragranceOil?: SortOrder
@@ -2540,7 +2550,6 @@ export namespace Prisma {
   }
 
   export type SoapBatchAvgOrderByAggregateInput = {
-    id?: SortOrder
     onHandLabeled?: SortOrder
     onHandUnlabeled?: SortOrder
     waterOz?: SortOrder
@@ -2552,12 +2561,12 @@ export namespace Prisma {
   export type SoapBatchMaxOrderByAggregateInput = {
     id?: SortOrder
     sheetId?: SortOrder
+    name?: SortOrder
+    recipe?: SortOrder
     onHandLabeled?: SortOrder
     onHandUnlabeled?: SortOrder
     madeDate?: SortOrder
     readyDate?: SortOrder
-    name?: SortOrder
-    recipe?: SortOrder
     waterOz?: SortOrder
     additionalIngredients?: SortOrder
     fragranceOil?: SortOrder
@@ -2572,12 +2581,12 @@ export namespace Prisma {
   export type SoapBatchMinOrderByAggregateInput = {
     id?: SortOrder
     sheetId?: SortOrder
+    name?: SortOrder
+    recipe?: SortOrder
     onHandLabeled?: SortOrder
     onHandUnlabeled?: SortOrder
     madeDate?: SortOrder
     readyDate?: SortOrder
-    name?: SortOrder
-    recipe?: SortOrder
     waterOz?: SortOrder
     additionalIngredients?: SortOrder
     fragranceOil?: SortOrder
@@ -2590,29 +2599,12 @@ export namespace Prisma {
   }
 
   export type SoapBatchSumOrderByAggregateInput = {
-    id?: SortOrder
     onHandLabeled?: SortOrder
     onHandUnlabeled?: SortOrder
     waterOz?: SortOrder
     fragranceAmountOz?: SortOrder
     oilTemp?: SortOrder
     lyeTemp?: SortOrder
-  }
-
-  export type IntWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[] | ListIntFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
-    _count?: NestedIntFilter<$PrismaModel>
-    _avg?: NestedFloatFilter<$PrismaModel>
-    _sum?: NestedIntFilter<$PrismaModel>
-    _min?: NestedIntFilter<$PrismaModel>
-    _max?: NestedIntFilter<$PrismaModel>
   }
 
   export type StringWithAggregatesFilter<$PrismaModel = never> = {
@@ -2633,20 +2625,6 @@ export namespace Prisma {
     _max?: NestedStringFilter<$PrismaModel>
   }
 
-  export type DateTimeWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeWithAggregatesFilter<$PrismaModel> | Date | string
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedDateTimeFilter<$PrismaModel>
-    _max?: NestedDateTimeFilter<$PrismaModel>
-  }
-
   export type StringNullableWithAggregatesFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel> | null
     in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
@@ -2665,6 +2643,36 @@ export namespace Prisma {
     _max?: NestedStringNullableFilter<$PrismaModel>
   }
 
+  export type IntNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedIntNullableFilter<$PrismaModel>
+    _max?: NestedIntNullableFilter<$PrismaModel>
+  }
+
+  export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedDateTimeNullableFilter<$PrismaModel>
+    _max?: NestedDateTimeNullableFilter<$PrismaModel>
+  }
+
   export type FloatNullableWithAggregatesFilter<$PrismaModel = never> = {
     equals?: number | FloatFieldRefInput<$PrismaModel> | null
     in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
@@ -2681,24 +2689,38 @@ export namespace Prisma {
     _max?: NestedFloatNullableFilter<$PrismaModel>
   }
 
+  export type DateTimeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeWithAggregatesFilter<$PrismaModel> | Date | string
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedDateTimeFilter<$PrismaModel>
+    _max?: NestedDateTimeFilter<$PrismaModel>
+  }
+
   export type StringFieldUpdateOperationsInput = {
     set?: string
   }
 
-  export type IntFieldUpdateOperationsInput = {
-    set?: number
+  export type NullableStringFieldUpdateOperationsInput = {
+    set?: string | null
+  }
+
+  export type NullableIntFieldUpdateOperationsInput = {
+    set?: number | null
     increment?: number
     decrement?: number
     multiply?: number
     divide?: number
   }
 
-  export type DateTimeFieldUpdateOperationsInput = {
-    set?: Date | string
-  }
-
-  export type NullableStringFieldUpdateOperationsInput = {
-    set?: string | null
+  export type NullableDateTimeFieldUpdateOperationsInput = {
+    set?: Date | string | null
   }
 
   export type NullableFloatFieldUpdateOperationsInput = {
@@ -2709,15 +2731,8 @@ export namespace Prisma {
     divide?: number
   }
 
-  export type NestedIntFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[] | ListIntFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntFilter<$PrismaModel> | number
+  export type DateTimeFieldUpdateOperationsInput = {
+    set?: Date | string
   }
 
   export type NestedStringFilter<$PrismaModel = never> = {
@@ -2734,17 +2749,6 @@ export namespace Prisma {
     not?: NestedStringFilter<$PrismaModel> | string
   }
 
-  export type NestedDateTimeFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeFilter<$PrismaModel> | Date | string
-  }
-
   export type NestedStringNullableFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel> | null
     in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
@@ -2759,6 +2763,28 @@ export namespace Prisma {
     not?: NestedStringNullableFilter<$PrismaModel> | string | null
   }
 
+  export type NestedIntNullableFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableFilter<$PrismaModel> | number | null
+  }
+
+  export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+  }
+
   export type NestedFloatNullableFilter<$PrismaModel = never> = {
     equals?: number | FloatFieldRefInput<$PrismaModel> | null
     in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
@@ -2770,31 +2796,15 @@ export namespace Prisma {
     not?: NestedFloatNullableFilter<$PrismaModel> | number | null
   }
 
-  export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[] | ListIntFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
-    _count?: NestedIntFilter<$PrismaModel>
-    _avg?: NestedFloatFilter<$PrismaModel>
-    _sum?: NestedIntFilter<$PrismaModel>
-    _min?: NestedIntFilter<$PrismaModel>
-    _max?: NestedIntFilter<$PrismaModel>
-  }
-
-  export type NestedFloatFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel>
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatFilter<$PrismaModel> | number
+  export type NestedDateTimeFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeFilter<$PrismaModel> | Date | string
   }
 
   export type NestedStringWithAggregatesFilter<$PrismaModel = never> = {
@@ -2814,18 +2824,15 @@ export namespace Prisma {
     _max?: NestedStringFilter<$PrismaModel>
   }
 
-  export type NestedDateTimeWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeWithAggregatesFilter<$PrismaModel> | Date | string
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedDateTimeFilter<$PrismaModel>
-    _max?: NestedDateTimeFilter<$PrismaModel>
+  export type NestedIntFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntFilter<$PrismaModel> | number
   }
 
   export type NestedStringNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -2845,7 +2852,7 @@ export namespace Prisma {
     _max?: NestedStringNullableFilter<$PrismaModel>
   }
 
-  export type NestedIntNullableFilter<$PrismaModel = never> = {
+  export type NestedIntNullableWithAggregatesFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel> | null
     in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
     notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
@@ -2853,7 +2860,26 @@ export namespace Prisma {
     lte?: number | IntFieldRefInput<$PrismaModel>
     gt?: number | IntFieldRefInput<$PrismaModel>
     gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntNullableFilter<$PrismaModel> | number | null
+    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedIntNullableFilter<$PrismaModel>
+    _max?: NestedIntNullableFilter<$PrismaModel>
+  }
+
+  export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedDateTimeNullableFilter<$PrismaModel>
+    _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
   export type NestedFloatNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -2870,6 +2896,20 @@ export namespace Prisma {
     _sum?: NestedFloatNullableFilter<$PrismaModel>
     _min?: NestedFloatNullableFilter<$PrismaModel>
     _max?: NestedFloatNullableFilter<$PrismaModel>
+  }
+
+  export type NestedDateTimeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeWithAggregatesFilter<$PrismaModel> | Date | string
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedDateTimeFilter<$PrismaModel>
+    _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
 

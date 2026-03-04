@@ -20,8 +20,8 @@ model SoapBatch {
   sheetId               String   @unique  // This matches your 'where' clause
   name                  String
   recipe                String?
-  onHandLabeled         Int      @default(0)
-  onHandUnlabeled       Int      @default(0)
+  onHandLabeled         Int?      @default(0)
+  onHandUnlabeled       Int ?     @default(0)
   madeDate              DateTime?
   readyDate             DateTime?
   waterOz               Float?

@@ -6,6 +6,8 @@ export default async function BatchesPage() {
     orderBy: { madeDate: 'desc' },
   });
 
+  console.log(batches);
+
   return (
     <div className="max-w-6xl mx-auto p-8">
       <header className="flex justify-between items-center mb-8 border-b pb-4">

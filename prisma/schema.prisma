@@ -22,8 +22,8 @@ model SoapBatch {
   recipe                String?
   onHandLabeled         Int      @default(0)
   onHandUnlabeled       Int      @default(0)
-  madeDate              DateTime
-  readyDate             DateTime
+  madeDate              DateTime?
+  readyDate             DateTime?
   waterOz               Float?
   additionalIngredients String?
   fragranceOil          String?

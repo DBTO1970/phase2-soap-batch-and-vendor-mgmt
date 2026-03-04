@@ -23,20 +23,20 @@ export async function POST(request: Request) {
     }
 
     const batchData = {
-      name: String(body.name),
-      onHandLabeled: Math.floor(safeNum(body.onHandLabeled)),
-      onHandUnlabeled: Math.floor(safeNum(body.onHandUnlabeled)),
-      madeDate: safeDate(body.madeDate),
-      readyDate: safeDate(body.readyDate),
-      recipe: body.recipe || "",
-      waterOz: safeNum(body.waterOz),
-      additionalIngredients: body.additionalIngredients || "",
-      fragranceOil: body.fragranceOil || "",
-      fragranceAmountOz: safeNum(body.fragranceAmountOz),
-      colorDesign: body.colorDesign || "",
-      oilTemp: safeNum(body.oilTemp),
-      lyeTemp: safeNum(body.lyeTemp),
-      notes: body.notes || "",
+      name: String(body.name || "Unnamed Batch"), 
+      recipe: String(body.recipe || ""),
+      onHandLabeled: parseInt(body.onHandLabeled) || 0,
+      onHandUnlabeled: parseInt(body.onHandUnlabeled) || 0,
+      madeDate: body.madeDate ? new Date(body.madeDate) : new Date(),
+      readyDate: body.readyDate ? new Date(body.readyDate) : new Date(),
+      waterOz: parseFloat(body.waterOz) || 0,
+      additionalIngredients: String(body.additionalIngredients || ""),
+      fragranceOil: String(body.fragranceOil || ""),
+      fragranceAmountOz: parseFloat(body.fragranceAmountOz) || 0,
+      colorDesign: String(body.colorDesign || ""),
+      oilTemp: parseFloat(body.oilTemp) || 0,
+      lyeTemp: parseFloat(body.lyeTemp) || 0,
+      notes: String(body.notes || ""),
     };
 
     const batch = await prisma.soapBatch.upsert({

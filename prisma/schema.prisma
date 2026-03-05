@@ -17,20 +17,20 @@ datasource db {
 
 model SoapBatch {
   id                    String   @id @default(cuid())
-  sheetId               String   @unique  // This matches your 'where' clause
-  name                  String
-  recipe                String?
-  onHandLabeled         Int?      @default(0)
-  onHandUnlabeled       Int ?     @default(0)
+  sheetId               String   @unique
+  name                  String   // This MUST be provided
+  recipe                String?  @default("N/A") // Added default
+  onHandLabeled         Int?     @default(0)
+  onHandUnlabeled       Int?     @default(0)
   madeDate              DateTime?
   readyDate             DateTime?
-  waterOz               Float?
-  additionalIngredients String?
-  fragranceOil          String?
-  fragranceAmountOz     Float?
-  colorDesign           String?
-  oilTemp               Float?
-  lyeTemp               Float?
-  notes                 String?
+  waterOz               Float?   @default(0) // Added default
+  additionalIngredients String?  @default("None")
+  fragranceOil          String?  @default("None")
+  fragranceAmountOz     Float?   @default(0)
+  colorDesign           String?  @default("Plain")
+  oilTemp               Float?   @default(0)
+  lyeTemp               Float?   @default(0)
+  notes                 String?  @default("")
   updatedAt             DateTime @updatedAt
 }

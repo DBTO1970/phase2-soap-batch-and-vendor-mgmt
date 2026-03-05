@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import RefreshButton from "../components/RefreshButton";
 
 export default async function BatchesPage() {
   // Fetch all batches, newest first
@@ -27,7 +28,7 @@ export default async function BatchesPage() {
                   {batch.sheetId}
                 </span>
               </div>
-              
+              <RefreshButton />
               <p className="text-sm text-slate-500 mb-4 italic">
                 {batch.recipe || "No recipe specified"}
               </p>

@@ -28,7 +28,7 @@ export default async function BatchesPage() {
                   {batch.sheetId}
                 </span>
               </div>
-              <RefreshButton />
+              
               <p className="text-sm text-slate-500 mb-4 italic">
                 {batch.recipe || "No recipe specified"}
               </p>
@@ -53,7 +53,7 @@ export default async function BatchesPage() {
           </div>
         ))}
       </div>
-
+      <RefreshButton />
       {batches.length === 0 && (
         <div className="text-center py-20 bg-slate-50 rounded-lg border-2 border-dashed">
           <p className="text-slate-400">No batches found. Try editing your Google Sheet to sync data!</p>

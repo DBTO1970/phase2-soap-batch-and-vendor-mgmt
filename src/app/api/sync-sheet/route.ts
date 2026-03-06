@@ -50,8 +50,14 @@ export async function POST(request: Request) {
     });
 
     return NextResponse.json({ success: true, batch });
-  } catch (error) {
-    console.error("Sync Error:", error);
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+  } catch (error: any) {
+    // This will print the SPECIFIC field causing the error in Vercel logs
+    console.error("FULL PRISMA ERROR:", JSON.stringify(error, null, 2));
+    
+    return NextResponse.json({ 
+      error: "Internal Server Error", 
+      details: error.message,
+      code: error.code 
+    }, { status: 500 });
   }
 }

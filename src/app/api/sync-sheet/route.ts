@@ -16,6 +16,7 @@ const safeDate = (val: any) => {
 export async function POST(request: Request) {
   try {
     const body = await request.json();
+    console.log("DATA RECEIVED FROM GOOGLE:", body);
 
     // Basic validation: Ensure we at least have a sheetId and name
     if (!body.sheetId || !body.name) {

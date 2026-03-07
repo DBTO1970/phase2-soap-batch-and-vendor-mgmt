@@ -29,7 +29,7 @@ export async function POST(request: Request) {
     }
 
     const batchData = {
-      name: sName,
+      // name: sName,
       recipe: String(body.recipe || "N/A"),
       onHandLabeled: parseInt(body.onHandLabeled) || 0,
       onHandUnlabeled: parseInt(body.onHandUnlabeled) || 0,

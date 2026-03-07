@@ -43,9 +43,9 @@ export default async function BatchesPage() {
                   <span className="font-semibold text-blue-600">{batch.onHandUnlabeled}</span>
                 </div>
                 <div className="pt-3 border-t flex justify-between items-center text-xs text-slate-400">
-                  <span>Made: {new Date(batch.madeDate).toLocaleDateString()}</span>
-                  <span className={new Date() >= new Date(batch.readyDate) ? "text-green-500 font-bold" : ""}>
-                    Ready: {new Date(batch.readyDate).toLocaleDateString()}
+                  <span>Made: {batch.madeDate ? new Date(batch.madeDate).toLocaleDateString() : "N/A"}</span>
+                  <span className={batch.readyDate && new Date() >= new Date(batch.readyDate) ? "text-green-500 font-bold" : ""}>
+                    Ready: {batch.readyDate ? new Date(batch.readyDate).toLocaleDateString() : "N/A"}
                   </span>
                 </div>
               </div>

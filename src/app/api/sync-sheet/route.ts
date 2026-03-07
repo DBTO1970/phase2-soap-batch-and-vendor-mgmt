@@ -29,7 +29,7 @@ export async function POST(request: Request) {
     }
 
     const batchData = {
-      // name: sName,
+      name: sName,
       recipe: String(body.recipe || "N/A"),
       onHandLabeled: parseInt(body.onHandLabeled) || 0,
       onHandUnlabeled: parseInt(body.onHandUnlabeled) || 0,
@@ -45,15 +45,11 @@ export async function POST(request: Request) {
       notes: String(body.notes || ""),
     };
 
-    // Generate a unique ID for the database primary key if it's a new record
-const generatedId = `batch_${sId}`; 
-
-const batch = await prisma.soapBatch.upsert({
+    const batch = await prisma.soapBatch.upsert({
  where: { sheetId: sId },
   update: batchData,
   create: {
     sheetId: sId,
-    name: sName,
     ...batchData,
   },
 });

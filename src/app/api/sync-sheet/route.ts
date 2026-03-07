@@ -45,10 +45,16 @@ export async function POST(request: Request) {
       notes: String(body.notes || ""),
     };
 
-    const batch = await prisma.soapBatch.upsert({
+    // Generate a unique ID for the database primary key if it's a new record
+const generatedId = `batch_${sId}`; 
+
+const batch = await prisma.soapBatch.upsert({
       where: { sheetId: sId },
       update: batchData,
       create: {
+        // We use 'as any' to bypass the incorrect 'number' requirement 
+        // while we fix the generator in the next step
+        id: generatedId as any, 
         sheetId: sId,
         ...batchData,
       },

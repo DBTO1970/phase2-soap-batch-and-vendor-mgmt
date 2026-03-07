@@ -1,23 +1,49 @@
 import { prisma } from "@/lib/prisma";
 import RefreshButton from "../components/RefreshButton";
+import BatchControls from "../components/BatchControls";
 
-export default async function BatchesPage() {
-  // Fetch all batches, newest first
-  const batches = await prisma.soapBatch.findMany({
-    where: {
-    OR: [
-      { onHandLabeled: { gte: 1 } },
-      { onHandUnlabeled: { gte: 1 } },
-    ],
-  },
-  orderBy: { readyDate: 'desc' },
+export default async function BatchesPage({
+    searchParams,
+  }: {
+    searchParams: Promise<{ q?: string; sort?: string }>;
+  }) 
+  {
+    const params = await searchParams;
+    const query = params.q || "";
+    const sort = params.sort || "readyDate_desc";
+    
+    // 1. Fetch filtered data from Database
+    const rawBatches = await prisma.soapBatch.findMany({
+      where: {
+        OR: [{ onHandLabeled: { gte: 1 } }, { onHandUnlabeled: { gte: 1 } }],
+        ...(query && {
+          OR: [
+            { name: { contains: query, mode: "insensitive" } },
+            { fragranceOil: { contains: query, mode: "insensitive" } },
+          ],
+        }),
+      },
+    });
+  // 2. Perform Sort
+  const batches = [...rawBatches].sort((a, b) => {
+    switch (sort) {
+      case "readyDate_asc":
+        return new Date(a.readyDate || 0).getTime() - new Date(b.readyDate || 0).getTime();
+      case "total_desc":
+        return (b.onHandLabeled || 0) + (b.onHandUnlabeled || 0) - (a.onHandLabeled || 0) - (a.onHandUnlabeled || 0);
+      case "total_asc":
+        return (a.onHandLabeled || 0) + (a.onHandUnlabeled || 0) - (b.onHandLabeled || 0) - (b.onHandUnlabeled || 0);
+      default: // readyDate_desc
+        return new Date(b.readyDate || 0).getTime() - new Date(a.readyDate || 0).getTime();
+    }
   });
 
   return (
     <div className="max-w-6xl mx-auto p-8">
       <header className="flex justify-between items-center mb-8 border-b pb-4">
-        <h1 className="text-3xl font-bold text-slate-800">Morning Rituals Inventory</h1>
-        <RefreshButton />
+        <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-100 border-slate-300 dark:border-slate-600">Morning Rituals Inventory</h1>
+          <BatchControls currentQuery={query} currentSort={sort} />
+          <RefreshButton />
         <div className="text-sm bg-blue-50 text-blue-700 px-3 py-1 rounded-full border border-blue-200">
           {batches.length} Active Batches
         </div>

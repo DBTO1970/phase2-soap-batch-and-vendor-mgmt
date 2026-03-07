@@ -16,7 +16,11 @@ const safeDate = (val: any) => {
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    console.log("DATA RECEIVED FROM GOOGLE:", body);
+    console.log("DEBUG: Received Payload:", JSON.stringify(body, null, 2));
+    if (!body.sheetId || !body.name) {
+      console.error("VALIDATION FAILED: Missing sheetId or name", body);
+      return NextResponse.json({ error: "Missing fields" }, { status: 400 });
+    }
 
     // Basic validation: Ensure we at least have a sheetId and name
     if (!body.id || !body.name) {

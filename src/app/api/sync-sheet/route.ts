@@ -1,5 +1,6 @@
 // app/api/sync-batch/route.ts
 import { NextResponse } from 'next/server';
+import cuid from 'cuid';
 import { prisma } from '@/lib/prisma';
 
 const safeNum = (val: any) => {
@@ -45,18 +46,23 @@ export async function POST(request: Request) {
       notes: String(body.notes || ""),
     };
 
+    // log the normalized batchData before upsert
+    console.log("UPSERT DATA:", { where: { sheetId: sId }, create: { sheetId: sId, ...batchData }, update: batchData });
+
     const batch = await prisma.soapBatch.upsert({
- where: { sheetId: sId },
-  update: batchData,
-  create: {
-    sheetId: sId,
-    ...batchData,
-  },
-});
+      where: { sheetId: sId },
+      update: batchData,
+      create: {
+        id: String(body.id || cuid()),
+        sheetId: sId,
+        ...batchData,
+      },
+    });
 
     return NextResponse.json({ success: true, batch });
   } catch (error: any) {
-    console.error("PRISMA ERROR:", error.message);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    // Prisma error objects often include `meta` with the column name
+    console.error("PRISMA ERROR:", error);
+    return NextResponse.json({ error: error.message, meta: error.meta || null }, { status: 500 });
   }
 }

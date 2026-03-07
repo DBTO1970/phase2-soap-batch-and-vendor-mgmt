@@ -16,52 +16,47 @@ const safeDate = (val: any) => {
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    console.log("DEBUG: Received Payload:", JSON.stringify(body, null, 2));
-    if (!body.sheetId || !body.name) {
-      console.error("VALIDATION FAILED: Missing sheetId or name", body);
-      return NextResponse.json({ error: "Missing fields" }, { status: 400 });
-    }
+    console.log("DEBUG: Received Payload:", body);
 
-    // Basic validation: Ensure we at least have a sheetId and name
-    if (!body.id || !body.name) {
-      return NextResponse.json({ error: "Missing required fields: id or name" }, { status: 400 });
+    // Force values to strings and trim whitespace
+    const sId = String(body.sheetId || "").trim();
+    const sName = String(body.name || "").trim();
+
+    // If we still don't have the basics, log exactly why
+    if (!sId || !sName) {
+      console.error(`VALIDATION FAILED. ID: "${sId}", Name: "${sName}"`);
+      return NextResponse.json({ error: "Missing ID or Name" }, { status: 400 });
     }
 
     const batchData = {
-      name: String(body.name || "Unnamed Batch"), 
-      recipe: String(body.recipe || ""),
+      name: sName,
+      recipe: String(body.recipe || "N/A"),
       onHandLabeled: parseInt(body.onHandLabeled) || 0,
       onHandUnlabeled: parseInt(body.onHandUnlabeled) || 0,
-      madeDate: body.madeDate ? safeDate(body.madeDate) : safeDate(null),
-      readyDate: body.readyDate ? safeDate(body.readyDate) : safeDate(null),
+      madeDate: body.madeDate ? new Date(body.madeDate) : new Date(),
+      readyDate: body.readyDate ? new Date(body.readyDate) : new Date(),
       waterOz: parseFloat(body.waterOz) || 0,
-      additionalIngredients: String(body.additionalIngredients || ""),
-      fragranceOil: String(body.fragranceOil || ""),
+      additionalIngredients: String(body.additionalIngredients || "None"),
+      fragranceOil: String(body.fragranceOil || "None"),
       fragranceAmountOz: parseFloat(body.fragranceAmountOz) || 0,
-      colorDesign: String(body.colorDesign || ""),
+      colorDesign: String(body.colorDesign || "Plain"),
       oilTemp: parseFloat(body.oilTemp) || 0,
       lyeTemp: parseFloat(body.lyeTemp) || 0,
       notes: String(body.notes || ""),
     };
 
     const batch = await prisma.soapBatch.upsert({
-      where: { id: body.id },
+      where: { sheetId: sId },
       update: batchData,
       create: {
-        sheetId: String(body.sheetId),
+        sheetId: sId,
         ...batchData,
       },
     });
 
     return NextResponse.json({ success: true, batch });
   } catch (error: any) {
-   // This will print the SPECIFIC field causing the error in your Vercel Logs
-    console.error("FULL PRISMA ERROR:", JSON.stringify(error, null, 2));
-    
-    return NextResponse.json({ 
-      error: "Internal Server Error",
-      code: error.code,
-      meta: error.meta 
-    }, { status: 500 });
+    console.error("PRISMA ERROR:", error.message);
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

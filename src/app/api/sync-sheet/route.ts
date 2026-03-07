@@ -49,16 +49,14 @@ export async function POST(request: Request) {
 const generatedId = `batch_${sId}`; 
 
 const batch = await prisma.soapBatch.upsert({
-      where: { sheetId: sId },
-      update: batchData,
-      create: {
-        // We use 'as any' to bypass the incorrect 'number' requirement 
-        // while we fix the generator in the next step
-        id: generatedId as any, 
-        sheetId: sId,
-        ...batchData,
-      },
-    });
+ where: { sheetId: sId },
+  update: batchData,
+  create: {
+    sheetId: sId,
+    name: sName,
+    ...batchData,
+  },
+});
 
     return NextResponse.json({ success: true, batch });
   } catch (error: any) {

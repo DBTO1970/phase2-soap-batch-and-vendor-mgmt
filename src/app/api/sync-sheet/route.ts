@@ -19,8 +19,8 @@ export async function POST(request: Request) {
     console.log("DATA RECEIVED FROM GOOGLE:", body);
 
     // Basic validation: Ensure we at least have a sheetId and name
-    if (!body.sheetId || !body.name) {
-      return NextResponse.json({ error: "Missing required fields: sheetId or name" }, { status: 400 });
+    if (!body.id || !body.name) {
+      return NextResponse.json({ error: "Missing required fields: id or name" }, { status: 400 });
     }
 
     const batchData = {
@@ -41,7 +41,7 @@ export async function POST(request: Request) {
     };
 
     const batch = await prisma.soapBatch.upsert({
-      where: { sheetId: String(body.sheetId) },
+      where: { id: body.id },
       update: batchData,
       create: {
         sheetId: String(body.sheetId),

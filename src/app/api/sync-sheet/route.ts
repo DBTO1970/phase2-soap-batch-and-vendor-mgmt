@@ -1,6 +1,6 @@
 // app/api/sync-batch/route.ts
 import { NextResponse } from 'next/server';
-import cuid from 'cuid';
+import { createId } from '@paralleldrive/cuid2';
 import { prisma } from '@/lib/prisma';
 
 const safeNum = (val: any) => {
@@ -53,7 +53,7 @@ export async function POST(request: Request) {
       where: { sheetId: sId },
       update: batchData,
       create: {
-        id: String(body.id || cuid()),
+        id: String(body.id || createId()),
         sheetId: sId,
         ...batchData,
       },

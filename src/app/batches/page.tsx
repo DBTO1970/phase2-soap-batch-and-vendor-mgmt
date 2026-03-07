@@ -7,7 +7,8 @@ export default async function BatchesPage() {
     orderBy: { madeDate: 'desc' },
   });
 
-  console.log(batches || "No batches found");
+  console.log("Fetched batches count:", batches.length);
+  console.log("First few batches:", batches.slice(0, 3));
 
   return (
     <div className="max-w-6xl mx-auto p-8">

@@ -51,13 +51,13 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ success: true, batch });
   } catch (error: any) {
-    // This will print the SPECIFIC field causing the error in Vercel logs
+   // This will print the SPECIFIC field causing the error in your Vercel Logs
     console.error("FULL PRISMA ERROR:", JSON.stringify(error, null, 2));
     
     return NextResponse.json({ 
-      error: "Internal Server Error", 
-      details: error.message,
-      code: error.code 
+      error: "Internal Server Error",
+      code: error.code,
+      meta: error.meta 
     }, { status: 500 });
   }
 }

@@ -4,11 +4,13 @@ import { PrismaAdapter } from "@auth/prisma-adapter";
 import { prisma } from "../../../../lib/prisma";
 import Credentials from "next-auth/providers/credentials";
 
+const isProduction = process.env.NODE_ENV === "production";
 // 1. Destructure the core methods needed for your app
 const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: PrismaAdapter(prisma),
   session: { strategy: "jwt" },
   secret: process.env.AUTH_SECRET,
+  useSecureCookies: isProduction,
   cookies: {
     sessionToken: {
       name: `__Secure-next-auth.session-token`,

@@ -19,6 +19,7 @@ export async function middleware(req: NextRequest) {
     if (!token) {
       return NextResponse.redirect(new URL("/api/auth/signin", req.url));
     }
+    console.log("DEBUG: Middleware checking token:", token);
     
     if (token.role !== "ADMIN") {
       return NextResponse.redirect(new URL("/", req.url));

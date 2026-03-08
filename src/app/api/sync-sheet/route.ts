@@ -1,4 +1,4 @@
-// app/api/sync-batch/route.ts
+// app/api/sync-sheet/route.ts
 import { NextResponse } from 'next/server';
 import { createId } from '@paralleldrive/cuid2';
 import { prisma } from '@/lib/prisma';

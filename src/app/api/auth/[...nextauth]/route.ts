@@ -1,9 +1,11 @@
+// app/api/auth/[...nextauth]/route.ts
 import NextAuth from "next-auth";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { prisma } from "../../../../lib/prisma";
 import Credentials from "next-auth/providers/credentials";
 
-export const { handlers, auth, signIn, signOut } = NextAuth({
+// 1. Destructure the core methods needed for your app
+const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: PrismaAdapter(prisma),
   session: { strategy: "jwt" },
   secret: process.env.AUTH_SECRET,
@@ -18,7 +20,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           update: {},
           create: { 
             email: credentials.email as string,
-            role: "ADMIN" // Ensure your login gets ADMIN status
+            role: "ADMIN" 
           },
         });
       },
@@ -26,10 +28,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   ],
   callbacks: {
     async jwt({ token, user }) {
-      // When a user logs in, 'user' is the object returned from authorize
       if (user) {
         token.id = user.id;
-        // @ts-ignore - 'user' here is the Prisma User object
+        // @ts-ignore
         token.role = user.role; 
       }
       return token;
@@ -38,10 +39,17 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       if (session.user) {
         // @ts-ignore
         session.user.id = token.id;
-        // @ts-ignore - Pass the role to the frontend session
+        // @ts-ignore
         session.user.role = token.role;
       }
       return session;
     },
   },
 });
+
+// 2. Export these for use in other parts of your app
+export { auth, signIn, signOut };
+
+// 3. Explicitly export GET and POST for the Route Handler
+export const GET = handlers.GET;
+export const POST = handlers.POST;

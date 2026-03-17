@@ -2,12 +2,14 @@
 
 import { signIn } from "next-auth/react"; // Use the client-side version
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-
-  const handleLogin = async (e: React.SubmitEvent<HTMLFormElement>) => {
+  const router = useRouter();
+  
+  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
     setError("");
@@ -27,6 +29,9 @@ export default function LoginPage() {
     if (result?.error) {
       setError("Invalid credentials. Please try again.");
       setLoading(false);
+    } else {
+      router.push("/batches");
+      router.refresh();
     }
   };
 

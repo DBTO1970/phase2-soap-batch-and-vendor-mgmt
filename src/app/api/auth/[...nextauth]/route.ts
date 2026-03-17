@@ -38,7 +38,7 @@ const { handlers, auth, signIn, signOut } = NextAuth({
   session: { strategy: "jwt" },
   secret: process.env.AUTH_SECRET,
   // 1. Let NextAuth handle secure cookies automatically based on the environment
-  useSecureCookies: isProduction,
+  useSecureCookies: false,
   providers: [
     Credentials({
       name: "Credentials",
@@ -98,5 +98,6 @@ const { handlers, auth, signIn, signOut } = NextAuth({
 export { auth, signIn, signOut };
 
 // 3. Explicitly export GET and POST for the Route Handler
-export const GET = handlers.GET;
-export const POST = handlers.POST;
+// export const GET = handlers.GET;
+// export const POST = handlers.POST;
+export const { GET, POST } = handlers;

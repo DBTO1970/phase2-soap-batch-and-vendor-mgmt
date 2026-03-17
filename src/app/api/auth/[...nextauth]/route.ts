@@ -7,6 +7,32 @@ import bcrypt from "bcryptjs";
 
 const isProduction = process.env.NODE_ENV === "production";
 
+authorize: async (credentials: { email: string; password: string; }) => {
+  if (!credentials?.email || !credentials?.password) return null;
+
+  const user = await prisma.user.findUnique({
+    where: { email: credentials.email as string }
+  });
+
+  // Check if user exists and has a password set
+  if (!user || !user.password) {
+    console.log("Auth Fail: User not found or no password set");
+    return null;
+  }
+
+  const isValid = await bcrypt.compare(
+    credentials.password as string,
+    user.password
+  );
+
+  if (!isValid) {
+    console.log("Auth Fail: Password mismatch");
+    return null;
+  }
+
+  return user;
+}
+
 const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: PrismaAdapter(prisma),
   session: { strategy: "jwt" },

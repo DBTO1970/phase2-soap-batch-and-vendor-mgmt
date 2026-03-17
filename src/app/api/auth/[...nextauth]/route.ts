@@ -27,23 +27,25 @@ const { handlers, auth, signIn, signOut } = NextAuth({
           where: { email: credentials.email as string }
         });
 
-        // Verify user exists and password matches
-        if (!user || !user.password) return null;
+       // Check if user exists and has a password set
+    if (!user || !user.password) {
+      console.log("Auth Fail: User not found or no password set");
+      return null;
+    }
 
-        const isPasswordValid = await bcrypt.compare(
-          credentials.password as string,
-          user.password
-        );
+    const isValid = await bcrypt.compare(
+      credentials.password as string,
+      user.password
+    );
 
-        if (!isPasswordValid) return null;
+    if (!isValid) {
+      console.log("Auth Fail: Password mismatch");
+      return null;
+    }
 
-        return {
-          id: user.id,
-          email: user.email,
-          role: user.role,
-        };
-      },
-    }),
+    return user;
+  }
+      }),
   ],
   callbacks: {
     async jwt({ token, user }) {

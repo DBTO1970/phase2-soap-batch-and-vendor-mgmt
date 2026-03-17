@@ -3,39 +3,45 @@ import NextAuth from "next-auth";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { prisma } from "../../../../lib/prisma";
 import Credentials from "next-auth/providers/credentials";
+import bcrypt from "bcryptjs";
 
 const isProduction = process.env.NODE_ENV === "production";
-// 1. Destructure the core methods needed for your app
+
 const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: PrismaAdapter(prisma),
   session: { strategy: "jwt" },
   secret: process.env.AUTH_SECRET,
+  // 1. Let NextAuth handle secure cookies automatically based on the environment
   useSecureCookies: isProduction,
-  cookies: {
-    sessionToken: {
-      name: `__Secure-next-auth.session-token`,
-      options: {
-        httpOnly: true,
-        sameSite: 'lax',
-        path: '/',
-        secure: true, // Vercel is always HTTPS
-      },
-    },
-  },
   providers: [
     Credentials({
-      credentials: { email: {} },
+      name: "Credentials",
+      credentials: {
+        email: { label: "Email", type: "email" },
+        password: { label: "Password", type: "password" }
+      },
       authorize: async (credentials) => {
-        if (!credentials?.email) return null;
-        
-        return await prisma.user.upsert({
-          where: { email: credentials.email as string },
-          update: {},
-          create: { 
-            email: credentials.email as string,
-            role: "ADMIN" 
-          },
+        if (!credentials?.email || !credentials?.password) return null;
+
+        const user = await prisma.user.findUnique({
+          where: { email: credentials.email as string }
         });
+
+        // Verify user exists and password matches
+        if (!user || !user.password) return null;
+
+        const isPasswordValid = await bcrypt.compare(
+          credentials.password as string,
+          user.password
+        );
+
+        if (!isPasswordValid) return null;
+
+        return {
+          id: user.id,
+          email: user.email,
+          role: user.role,
+        };
       },
     }),
   ],

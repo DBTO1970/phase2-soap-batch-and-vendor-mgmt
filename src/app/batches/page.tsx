@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import RefreshButton from "../components/RefreshButton";
 import BatchControls from "../components/BatchControls";
+import { auth } from "@/app/api/auth/[...nextauth]/route";
 
 export default async function BatchesPage({
     searchParams,
@@ -8,6 +9,12 @@ export default async function BatchesPage({
     searchParams: Promise<{ q?: string; sort?: string }>;
   }) 
   {
+    const session = await auth();
+    console.log("DEBUG: BatchesPage Session:", session);
+    
+    if (!session) {
+      return <div>Not logged in!</div>;
+    }
     const params = await searchParams;
     const query = params.q || "";
     const sort = params.sort || "readyDate_desc";

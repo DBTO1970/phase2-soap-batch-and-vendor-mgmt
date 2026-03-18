@@ -15,7 +15,7 @@ export async function POST(request: Request) {
         email,
         name,
         password: hashedPassword,
-        role: "ADMIN", // Defaulting to ADMIN for your setup
+        role: "USER", 
       },
     });
 

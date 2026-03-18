@@ -21,8 +21,11 @@ export default function RegisterPage() {
   return (
     <form onSubmit={handleSubmit} className="p-10 flex flex-col gap-4 max-w-sm mx-auto">
       <h1>Create Admin Account</h1>
+      <label htmlFor="name">Name</label>
       <input name="name" placeholder="Name" className="border p-2 text-black" />
+      <label htmlFor="email">Email</label>
       <input name="email" type="email" placeholder="Email" className="border p-2 text-black" />
+      <label htmlFor="password">Password</label>
       <input name="password" type="password" placeholder="Password" className="border p-2 text-black" />
       <button type="submit" className="bg-green-600 text-white p-2">Register</button>
       <p>{status}</p>

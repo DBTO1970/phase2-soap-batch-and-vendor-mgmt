@@ -63,6 +63,9 @@ export default async function BatchesPage({
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Batch Inventory</h1>
           <p className="text-gray-500 dark:text-gray-400">Live stock from production sheets</p>
         </div>
+        <div className="text-gray-500 dark:text-gray-400 text-sm bg-gray-100 dark:bg-gray-800 px-3 py-1 rounded">
+          Total Batches: {batches.length}
+        </div>
          <RefreshButton />
         <BatchControls currentQuery={query} currentSort={sort} />
         
@@ -78,8 +81,6 @@ export default async function BatchesPage({
                   {batch.sheetId}
                 </span>
               </div>
-              
-              <p className="text-sm text-gray-500 mb-4 italic">{batch.recipe}</p>
 
               <div className="grid grid-cols-2 gap-4 mb-4">
                 <div className="bg-blue-50 p-3 rounded-lg text-center">
@@ -90,12 +91,13 @@ export default async function BatchesPage({
                   <p className="text-2xl font-bold text-gray-700">{batch.onHandUnlabeled}</p>
                   <p className="text-[10px] uppercase text-gray-400 font-semibold tracking-wide">Unlabeled</p>
                 </div>
+                <div className="col-span-2 text-sm text-gray-600">Total on hand: <span className="font-bold">{(batch.onHandLabeled || 0) + (batch.onHandUnlabeled || 0)}</span></div>
               </div>
 
               <div className="space-y-2 text-sm border-t pt-4">
                 <div className="flex justify-between">
                   <span className="text-gray-500">Fragrance:</span>
-                  <span className="font-medium text-gray-900">{batch.fragranceOil}</span>
+                  <span className="font-medium text-gray-900">{batch.fragranceOil} {batch.fragranceAmountOz} oz</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-500">Ready Date:</span>

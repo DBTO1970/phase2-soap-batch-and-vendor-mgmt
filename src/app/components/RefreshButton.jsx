@@ -19,7 +19,7 @@ export default function RefreshButton() {
     <button
       onClick={handleRefresh}
       disabled={loading}
-      className="px-4 py-2 bg-slate-900 text-white rounded-lg text-sm hover:bg-slate-700 disabled:opacity-50"
+      className="px-4 py-2 bg-slate-900 dark:bg-white text-white dark:text-black rounded-lg text-sm hover:bg-slate-700 disabled:opacity-50"
     >
       {loading ? "Refreshing..." : "Refresh Data"}
     </button>

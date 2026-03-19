@@ -37,8 +37,8 @@ export default function LoginPage() {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen">
-      <form onSubmit={handleLogin} className="p-8 border rounded shadow-md space-y-4 bg-white">
-        <h1 className="text-xl font-bold">Admin Login</h1>
+      <form onSubmit={handleLogin} className="p-8 border rounded shadow-md space-y-4 bg-white dark:bg-gray-800 ">
+        <h1 className="text-xl font-bold text-black dark:text-white">Admin Login</h1>
         {error && <p className="text-red-500 text-sm">{error}</p>}
         
         <input 
@@ -46,14 +46,14 @@ export default function LoginPage() {
           type="email" 
           placeholder="Email" 
           required 
-          className="block border p-2 w-full rounded text-black" 
+          className="block border p-2 w-full rounded text-black dark:text-white" 
         />
         <input 
           name="password" 
           type="password" 
           placeholder="Password" 
           required 
-          className="block border p-2 w-full rounded text-black" 
+          className="block border p-2 w-full rounded text-black dark:text-white" 
         />
         
         <button 

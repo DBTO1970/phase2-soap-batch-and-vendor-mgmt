@@ -5,34 +5,29 @@ import type { NextRequest } from "next/server";
 
 export async function middleware(req: NextRequest) {
   const path = req.nextUrl.pathname;
-  const apiKey = req.headers.get("x-api-key");
 
-  // 1. HIGH PRIORITY: If the sync route has the correct key, let it pass immediately!
-  // We check this BEFORE checking for a token, so external tools don't get blocked.
-  if (path === "/api/sync-sheet" && apiKey === process.env.SYNC_API_KEY) {
+  // 1. EXEMPTION: If it's the sync route, skip middleware entirely.
+  // The API Key check is already inside your app/api/sync-sheet/route.ts.
+  if (path === "/api/sync-sheet") {
     return NextResponse.next();
   }
 
-  // 2. Auth Check: Get token
+  // 2. Auth Check: Get token for everything else
   const token = await getToken({ req, secret: process.env.AUTH_SECRET });
 
   if (!token) {
-    console.log("DEBUG: Middleware: No token found. Redirecting to signin.");
     return NextResponse.redirect(new URL("/api/auth/signin", req.url));
   }
-  console.log("DEBUG: Middleware: Token found:", token);
 
-  // 3. Protect /batches
-  if (path.startsWith("/batches")) {
-    // We already have the token from step 2
-    if (token.role !== "ADMIN") {
-      return NextResponse.redirect(new URL("/", req.url));
-    }
+  // 3. Role Protection for /batches
+  if (path.startsWith("/batches") && token.role !== "ADMIN") {
+    return NextResponse.redirect(new URL("/", req.url));
   }
 
   return NextResponse.next();
 }
 
 export const config = {
+  // Only run middleware on these specific paths
   matcher: ["/batches/:path*", "/api/sync-sheet"],
 };

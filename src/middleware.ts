@@ -16,7 +16,7 @@ export async function middleware(req: NextRequest) {
   const token = await getToken({ req, secret: process.env.AUTH_SECRET });
 
   if (!token) {
-    return NextResponse.redirect(new URL("/api/auth/signin", req.url));
+    return NextResponse.redirect(new URL("/login", req.url));
   }
 
  const isAdminPage = path.startsWith("/batches") || path.startsWith("/inventory");

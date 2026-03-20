@@ -36,6 +36,10 @@ const isProduction = process.env.NODE_ENV === "production";
 const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: PrismaAdapter(prisma),
   session: { strategy: "jwt" },
+  pages: {
+    signIn: '/login',      // Redirige all "Sign In" requests here
+    error: '/login',       // Redirige auth errors here too
+  },
   secret: process.env.AUTH_SECRET,
   // 1. Let NextAuth handle secure cookies automatically based on the environment
   useSecureCookies: process.env.NODE_ENV === "production",

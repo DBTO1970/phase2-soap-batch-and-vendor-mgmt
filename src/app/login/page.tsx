@@ -23,14 +23,14 @@ export default function LoginPage() {
       email,
       password,
       redirect: false,
-      callbackUrl: "/batches", 
+      callbackUrl: "/inventory", 
     });
 
     if (result?.error) {
       setError("Invalid credentials. Please try again.");
       setLoading(false);
     } else {
-      router.push("/batches");
+      router.push("/inventory");
       router.refresh();
     }
   };

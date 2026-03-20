@@ -15,8 +15,8 @@ export default function Navbar() {
         
         {session && (
           <div className="hidden md:flex gap-4 text-gray-600">
-            <Link href="/batches" className="hover:text-blue-600 transition">Batches</Link>
             <Link href="/inventory" className="hover:text-blue-600 transition">Inventory</Link>
+             <Link href="/batches" className="hover:text-blue-600 transition">Batches</Link>
           </div>
         )}
       </div>

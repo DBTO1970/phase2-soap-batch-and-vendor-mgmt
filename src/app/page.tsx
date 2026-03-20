@@ -8,7 +8,6 @@ export default function Home() {
         <h1 className="text-5xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-7xl">
           Welcome to Morning Rituals Soap Manager
         </h1>
-         <Batches />
         <div className="mt-10 flex w-full items-center justify-center rounded-xl border bg-gray-100 p-6 text-center text-gray-500 dark:bg-gray-800 dark:text-gray-400">
          
           <p className="text-lg">

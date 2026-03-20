@@ -25,8 +25,8 @@ export default function SignInForm() {
       const result = await signInAction(email);
       if (result.success) {
         // On successful sign-in, redirect to the batches page.
-        console.log("Sign in successful, redirecting to /batches...");
-        router.push("/batches");
+        console.log("Sign in successful, redirecting to /inventory...");
+        router.push("/inventory");
       } else {
         setError(result.message || "An unknown error occurred.");
         setIsSubmitting(false);

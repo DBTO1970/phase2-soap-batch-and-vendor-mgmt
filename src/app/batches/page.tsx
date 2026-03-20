@@ -62,7 +62,7 @@ export default async function BatchesPage({
     <div className="max-w-6xl mx-auto py-2 px-4 space-y-8">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Batch Inventory</h1>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Soap Batches</h1>
           <p className="text-gray-500 dark:text-gray-400">Live from production sheets</p>
         </div>
         <div className="text-gray-500 dark:text-gray-400 text-sm bg-gray-100 dark:bg-gray-800 px-3 py-1 rounded">
@@ -84,7 +84,7 @@ export default async function BatchesPage({
               <div className="flex justify-between items-start mb-2">
                 <h3 className="font-bold text-lg text-gray-900 leading-tight">{batch.name}</h3>
                 <span className="text-[10px] bg-gray-100 px-2 py-1 rounded text-gray-500 font-mono uppercase">
-                  {batch.sheetId}
+                  {batch.fragranceOil || "No Fragrance"}
                 </span>
               </div>
 

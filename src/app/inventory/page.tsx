@@ -19,6 +19,7 @@ export default async function InventoryPage({
   const sort = params.sort || "readyDate_desc";
   const activeFilter = params.filter || ""; // 'ready', 'curing', 'low'
   const now = new Date();
+  now.setHours(0, 0, 0, 0);
 
   // 1. Fetch filtered data
   const rawBatches = await prisma.soapBatch.findMany({

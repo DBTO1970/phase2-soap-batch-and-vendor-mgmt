@@ -1,21 +1,16 @@
 import NextAuth from "next-auth";
 import { PrismaAdapter } from "@auth/prisma-adapter";
-import { prisma } from "../../../../lib/prisma";
+import { prisma } from "@/lib/prisma"; // Adjust this path to your actual prisma file
 import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
-
-const useSecureCookies = process.env.NODE_ENV === "production";
 
 const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: PrismaAdapter(prisma),
   session: { strategy: "jwt" },
-  trustHost: true,
   secret: process.env.AUTH_SECRET,
-  // Let NextAuth handle the naming/prefixing based on this boolean
-  useSecureCookies: useSecureCookies, 
+  trustHost: true,
   pages: {
     signIn: '/login',
-    error: '/login',
   },
   providers: [
     Credentials({
@@ -24,7 +19,7 @@ const { handlers, auth, signIn, signOut } = NextAuth({
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" }
       },
-      authorize: async (credentials) => {
+      async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) return null;
 
         const user = await prisma.user.findUnique({
@@ -38,7 +33,15 @@ const { handlers, auth, signIn, signOut } = NextAuth({
           user.password
         );
 
-        return isValid ? user : null;
+        if (!isValid) return null;
+
+        // Return the user object with the role
+        return {
+          id: user.id,
+          email: user.email,
+          name: user.name,
+          role: user.role, // Make sure this is in your Prisma schema
+        };
       }
     }),
   ],
@@ -46,17 +49,14 @@ const { handlers, auth, signIn, signOut } = NextAuth({
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
-        // @ts-ignore
-        token.role = user.role; 
+        token.role = (user as any).role;
       }
       return token;
     },
     async session({ session, token }) {
       if (session.user) {
-        // @ts-ignore
-        session.user.id = token.id;
-        // @ts-ignore
-        session.user.role = token.role;
+        (session.user as any).id = token.id;
+        (session.user as any).role = token.role;
       }
       return session;
     },

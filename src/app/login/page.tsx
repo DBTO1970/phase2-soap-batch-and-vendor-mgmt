@@ -18,20 +18,21 @@ export default function LoginPage() {
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
 
-    // This handles the CSRF token automatically!
+    try {
+      // This handles the CSRF token automatically!
     const result = await signIn("credentials", {
       email,
       password,
       redirect: true,
       callbackUrl: "/inventory", 
     });
-
     if (error) {
-      setError("Invalid credentials. Please try again.");
+      setError("Login failed. Check your credentials.");
       setLoading(false);
-    } else {
-      router.push("/inventory");
-      router.refresh();
+    }
+    } catch (err) {
+      setError("An unexpected error occurred.");
+      setLoading(false);
     }
   };
 

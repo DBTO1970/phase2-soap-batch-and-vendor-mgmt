@@ -14,14 +14,18 @@ export async function middleware(req: NextRequest) {
 
   // 2. Auth Check: Get token for everything else
   const token = await getToken({ req, secret: process.env.AUTH_SECRET });
-
-  if (!token) {
-    return NextResponse.redirect(new URL("/login", req.url));
+  console.log("Middleware Path:", path, "Has Token:", !!token, "Role:", token?.role);
+  if (token && path === "/login") {
+    return NextResponse.redirect(new URL("/inventory", req.url));
   }
+
+ if (!token && path !== "/login") {
+  return NextResponse.redirect(new URL("/login", req.url));
+}
 
  const isAdminPage = path.startsWith("/batches") || path.startsWith("/inventory");
 
-if (isAdminPage && token.role !== "ADMIN") {
+if (isAdminPage && token?.role !== "ADMIN") {
   console.log("Access denied: User is not an ADMIN");
   return NextResponse.redirect(new URL("/", req.url));
 }
@@ -31,8 +35,14 @@ if (isAdminPage && token.role !== "ADMIN") {
 
 export const config = {
   matcher: [
-    "/batches/:path*", 
-    "/inventory/:path*", // Added this!
-    "/api/sync-sheet"
+   /*
+     * Match all request paths except for the ones starting with:
+     * - api/auth (NextAuth internals)
+     * - login (Your custom login page)
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     */
+    '/((?!api/auth|login|_next/static|_next/image|favicon.ico).*)',
   ],
 };

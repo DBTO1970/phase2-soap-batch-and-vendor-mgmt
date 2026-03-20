@@ -6,7 +6,8 @@ import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 
 const isProduction = process.env.NODE_ENV === "production";
-
+const useSecureCookies = process.env.NODE_ENV === "production";
+const cookiePrefix = useSecureCookies ? "__Secure-" : "";
 // authorize: async (credentials: { email: string; password: string; }) => {
 //   if (!credentials?.email || !credentials?.password) return null;
 
@@ -36,11 +37,23 @@ const isProduction = process.env.NODE_ENV === "production";
 const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: PrismaAdapter(prisma),
   session: { strategy: "jwt" },
+  trustHost: true,
+  secret: process.env.AUTH_SECRET,
+  cookies: {
+    sessionToken: {
+      name: `${cookiePrefix}next-auth.session-token`,
+      options: {
+        httpOnly: true,
+        sameSite: 'lax',
+        path: '/',
+        secure: useSecureCookies, // This must be false for localhost!
+      },
+    },
+  },
   pages: {
     signIn: '/login',      // Redirige all "Sign In" requests here
     error: '/login',       // Redirige auth errors here too
   },
-  secret: process.env.AUTH_SECRET,
   // 1. Let NextAuth handle secure cookies automatically based on the environment
   useSecureCookies: process.env.NODE_ENV === "production",
   providers: [

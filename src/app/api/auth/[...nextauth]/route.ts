@@ -1,61 +1,22 @@
-// app/api/auth/[...nextauth]/route.ts
 import NextAuth from "next-auth";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { prisma } from "../../../../lib/prisma";
 import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 
-const isProduction = process.env.NODE_ENV === "production";
 const useSecureCookies = process.env.NODE_ENV === "production";
-const cookiePrefix = useSecureCookies ? "__Secure-" : "";
-// authorize: async (credentials: { email: string; password: string; }) => {
-//   if (!credentials?.email || !credentials?.password) return null;
-
-//   const user = await prisma.user.findUnique({
-//     where: { email: credentials.email as string }
-//   });
-
-//   // Check if user exists and has a password set
-//   if (!user || !user.password) {
-//     console.log("Auth Fail: User not found or no password set");
-//     return null;
-//   }
-
-//   const isValid = await bcrypt.compare(
-//     credentials.password as string,
-//     user.password
-//   );
-
-//   if (!isValid) {
-//     console.log("Auth Fail: Password mismatch");
-//     return null;
-//   }
-
-//   return user;
-// }
 
 const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: PrismaAdapter(prisma),
   session: { strategy: "jwt" },
   trustHost: true,
   secret: process.env.AUTH_SECRET,
-  cookies: {
-    sessionToken: {
-      name: `${cookiePrefix}next-auth.session-token`,
-      options: {
-        httpOnly: true,
-        sameSite: 'lax',
-        path: '/',
-        secure: useSecureCookies, // This must be false for localhost!
-      },
-    },
-  },
+  // Let NextAuth handle the naming/prefixing based on this boolean
+  useSecureCookies: useSecureCookies, 
   pages: {
-    signIn: '/login',      // Redirige all "Sign In" requests here
-    error: '/login',       // Redirige auth errors here too
+    signIn: '/login',
+    error: '/login',
   },
-  // 1. Let NextAuth handle secure cookies automatically based on the environment
-  useSecureCookies: process.env.NODE_ENV === "production",
   providers: [
     Credentials({
       name: "Credentials",
@@ -70,25 +31,16 @@ const { handlers, auth, signIn, signOut } = NextAuth({
           where: { email: credentials.email as string }
         });
 
-       // Check if user exists and has a password set
-    if (!user || !user.password) {
-      console.log("Auth Fail: User not found or no password set");
-      return null;
-    }
+        if (!user || !user.password) return null;
 
-    const isValid = await bcrypt.compare(
-      credentials.password as string,
-      user.password
-    );
+        const isValid = await bcrypt.compare(
+          credentials.password as string,
+          user.password
+        );
 
-    if (!isValid) {
-      console.log("Auth Fail: Password mismatch");
-      return null;
-    }
-
-    return user;
-  }
-      }),
+        return isValid ? user : null;
+      }
+    }),
   ],
   callbacks: {
     async jwt({ token, user }) {
@@ -111,10 +63,5 @@ const { handlers, auth, signIn, signOut } = NextAuth({
   },
 });
 
-// 2. Export these for use in other parts of your app
 export { auth, signIn, signOut };
-
-// 3. Explicitly export GET and POST for the Route Handler
-// export const GET = handlers.GET;
-// export const POST = handlers.POST;
 export const { GET, POST } = handlers;

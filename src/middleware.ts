@@ -20,7 +20,7 @@ export async function middleware(req: NextRequest) {
   }
 
   // 3. Role Protection for /batches
-  if (path.startsWith("/batches") && token.role !== "ADMIN"|| path.startsWith("/inventory") && token.role !== "ADMIN") {
+  if (path.startsWith("/batches") && token.role !== "ADMIN") {
     return NextResponse.redirect(new URL("/", req.url));
   }
 
@@ -29,5 +29,5 @@ export async function middleware(req: NextRequest) {
 
 export const config = {
   // Only run middleware on these specific paths
-  matcher: ["/batches/:path*", "/inventory/:path*", "/api/sync-sheet"],
+  matcher: ["/batches/:path*", "/api/sync-sheet"],
 };

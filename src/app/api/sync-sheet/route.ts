@@ -6,7 +6,7 @@ import { prisma } from '@/lib/prisma';
 export async function POST(request: Request) {
   // 1. Check API Key Security
   const apiKey = request.headers.get("x-api-key");
-  const VALID_KEY = "d9b1c8e5-7a3b-4c8e-9f0a-2b1c3d4e5f6a"; // Match your Apps Script
+  const VALID_KEY = process.env.SYNC_API_KEY; // Match your Apps Script
 
   if (apiKey !== VALID_KEY) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

@@ -57,14 +57,17 @@ export default async function BatchesPage({
   });
 
   return (
-    <div className="max-w-6xl mx-auto py-8 px-4 space-y-8">
+    <div className="max-w-6xl mx-auto py-2 px-4 space-y-8">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Batch Inventory</h1>
-          <p className="text-gray-500 dark:text-gray-400">Live stock from production sheets</p>
+          <p className="text-gray-500 dark:text-gray-400">Live from production sheets</p>
         </div>
         <div className="text-gray-500 dark:text-gray-400 text-sm bg-gray-100 dark:bg-gray-800 px-3 py-1 rounded">
           Total Batches: {batches.length}
+        </div>
+        <div className="text-gray-500 dark:text-gray-400 text-sm bg-green-100 dark:bg-green-800 px-3 py-1 rounded">
+          Total Bars Ready: {batches.filter(batch => new Date(batch.readyDate || 0) <= new Date()).length}
         </div>
          <RefreshButton />
         <BatchControls currentQuery={query} currentSort={sort} />

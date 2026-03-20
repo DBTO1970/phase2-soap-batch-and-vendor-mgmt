@@ -47,6 +47,7 @@ export default async function BatchesPage({
     const totalB = (b.onHandLabeled || 0) + (b.onHandUnlabeled || 0);
     const dateA = new Date(a.readyDate || 0).getTime();
     const dateB = new Date(b.readyDate || 0).getTime();
+    
 
     switch (sort) {
       case "readyDate_asc": return dateA - dateB;
@@ -55,6 +56,7 @@ export default async function BatchesPage({
       default: return dateB - dateA; // readyDate_desc
     }
   });
+  const now = new Date();
 
   return (
     <div className="max-w-6xl mx-auto py-2 px-4 space-y-8">
@@ -67,7 +69,8 @@ export default async function BatchesPage({
           Total Batches: {batches.length}
         </div>
         <div className="text-gray-500 dark:text-gray-400 text-sm bg-green-100 dark:bg-green-800 px-3 py-1 rounded">
-          Total Bars Ready: {batches.filter(batch => new Date(batch.readyDate || 0) <= new Date()).length}
+          Total Bars Ready: {batches.filter(b => b.readyDate && new Date(b.readyDate) <= now)
+          .reduce((sum, b) => sum + (b.onHandLabeled || 0) + (b.onHandUnlabeled || 0), 0)}
         </div>
          <RefreshButton />
         <BatchControls currentQuery={query} currentSort={sort} />

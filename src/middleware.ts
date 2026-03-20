@@ -19,15 +19,20 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(new URL("/api/auth/signin", req.url));
   }
 
-  // 3. Role Protection for /batches
-  if (path.startsWith("/batches") && token.role !== "ADMIN") {
-    return NextResponse.redirect(new URL("/", req.url));
-  }
+ const isAdminPage = path.startsWith("/batches") || path.startsWith("/inventory");
+
+if (isAdminPage && token.role !== "ADMIN") {
+  console.log("Access denied: User is not an ADMIN");
+  return NextResponse.redirect(new URL("/", req.url));
+}
 
   return NextResponse.next();
 }
 
 export const config = {
-  // Only run middleware on these specific paths
-  matcher: ["/batches/:path*", "/api/sync-sheet"],
+  matcher: [
+    "/batches/:path*", 
+    "/inventory/:path*", // Added this!
+    "/api/sync-sheet"
+  ],
 };

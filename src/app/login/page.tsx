@@ -20,13 +20,13 @@ export default function LoginPage() {
 
     // This handles the CSRF token automatically!
     const result = await signIn("credentials", {
-      email,
-      password,
-      redirect: false,
+      email: email,
+      password: password,
+      redirect: true,
       callbackUrl: "/inventory", 
     });
 
-    if (result?.error) {
+    if (error) {
       setError("Invalid credentials. Please try again.");
       setLoading(false);
     } else {

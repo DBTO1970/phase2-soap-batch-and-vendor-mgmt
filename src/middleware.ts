@@ -1,45 +1,34 @@
-import { getToken } from "next-auth/jwt";
+// middleware.ts
+import NextAuth from "next-auth";
+import { authConfig } from "./lib/auth.config"; // Point to the new file
 import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
 
-export async function middleware(req: NextRequest) {
-  const { pathname } = req.nextUrl;
+const { auth } = NextAuth(authConfig);
 
-  // 1. EXCEPTION: Allow Google Sheets to bypass Middleware entirely
-  // We check this BEFORE searching for a session token to save resources
-  if (pathname.startsWith("/api/sync-sheet")) {
-    return NextResponse.next();
+export default auth((req) => {
+  const { nextUrl } = req;
+  const isLoggedIn = !!req.auth;
+  const pathname = nextUrl.pathname;
+
+  if (pathname.startsWith("/api/sync-sheet")) return NextResponse.next();
+
+  if (isLoggedIn && pathname === "/login") {
+    return NextResponse.redirect(new URL("/inventory", nextUrl));
   }
 
-  // 2. Auth Check
-  const token = await getToken({ req, secret: process.env.AUTH_SECRET });
-
-  // 3. Logic: Redirect logged-in users away from /login
-  if (token && pathname === "/login") {
-    return NextResponse.redirect(new URL("/inventory", req.url));
-  }
-
-  // 4. Logic: Protect Inventory & Batches
   const isProtectedRoute = pathname.startsWith("/inventory") || pathname.startsWith("/batches");
-  
-  if (isProtectedRoute && !token) {
-    return NextResponse.redirect(new URL("/login", req.url));
+  if (!isLoggedIn && isProtectedRoute) {
+    return NextResponse.redirect(new URL("/login", nextUrl));
   }
 
-  // 5. Admin protection for /batches
-  if (pathname.startsWith("/batches") && token?.role !== "ADMIN") {
-    return NextResponse.redirect(new URL("/inventory", req.url));
+  const userRole = (req.auth?.user as any)?.role;
+  if (pathname.startsWith("/batches") && userRole !== "ADMIN") {
+    return NextResponse.redirect(new URL("/inventory", nextUrl));
   }
 
   return NextResponse.next();
-}
+});
 
 export const config = {
-  /*
-   * Match all paths EXCEPT:
-   * 1. /api/auth (NextAuth internals)
-   * 2. /_next (Static files)
-   * 3. /fonts, /images, favicon.ico (Public assets)
-   */
-  matcher: ["/((?!api/auth|_next|fonts|images|favicon.ico).*)"],
+  matcher: ["/((?!api/auth|_next/static|_next/image|favicon.ico).*)"],
 };

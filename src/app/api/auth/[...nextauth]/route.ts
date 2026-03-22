@@ -1,10 +1,12 @@
 import NextAuth from "next-auth";
 import { PrismaAdapter } from "@auth/prisma-adapter";
-import { prisma } from "@/lib/prisma"; // Adjust this path to your actual prisma file
+import { prisma } from "@/lib/prisma";
+import { authConfig } from "@/lib/auth.config";
 import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 
-const { handlers, auth, signIn, signOut } = NextAuth({
+export const { handlers, auth, signIn, signOut } = NextAuth({
+  ...authConfig,
   adapter: PrismaAdapter(prisma),
   session: { strategy: "jwt" },
   secret: process.env.AUTH_SECRET,
@@ -12,39 +14,6 @@ const { handlers, auth, signIn, signOut } = NextAuth({
   pages: {
     signIn: '/login',
   },
-  providers: [
-    Credentials({
-      name: "Credentials",
-      credentials: {
-        email: { label: "Email", type: "email" },
-        password: { label: "Password", type: "password" }
-      },
-      async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) return null;
-
-        const user = await prisma.user.findUnique({
-          where: { email: credentials.email as string }
-        });
-
-        if (!user || !user.password) return null;
-
-        const isValid = await bcrypt.compare(
-          credentials.password as string,
-          user.password
-        );
-
-        if (!isValid) return null;
-
-        // Return the user object with the role
-        return {
-          id: user.id,
-          email: user.email,
-          name: user.name,
-          role: user.role, // Make sure this is in your Prisma schema
-        };
-      }
-    }),
-  ],
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
@@ -61,7 +30,19 @@ const { handlers, auth, signIn, signOut } = NextAuth({
       return session;
     },
   },
+  providers: [
+    Credentials({
+      async authorize(credentials) {
+        // ... Keep your existing bcrypt/prisma logic here ...
+        // It's safe here because this file runs in the Node.js runtime, not Edge
+        if (!credentials?.email || !credentials?.password) return null;
+        const user = await prisma.user.findUnique({ where: { email: credentials.email as string } });
+        if (!user || !user.password) return null;
+        const isValid = await bcrypt.compare(credentials.password as string, user.password);
+        return isValid ? user : null;
+      }
+    })
+  ]
 });
 
-export { auth, signIn, signOut };
 export const { GET, POST } = handlers;

@@ -12,7 +12,7 @@ export default function BatchControls({ currentQuery, currentSort }: { currentQu
   };
 
   return (
-    <div className="flex gap-2 items-center">
+    <div className="flex flex-col md:flex-row md:gap-2 items-center">
       <div className="relative flex items-center">
         <input
           type="text"

@@ -24,3 +24,37 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+.header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-image: url('/soap_banner.jpg');
+  background-size: cover;
+  background-position: center;
+  width: 100%;
+  max-height: 400px;
+  margin: auto;
+  border-bottom: .1px solid #550000;
+  box-shadow: 5px 5px 5px gray;
+  -webkit-box-shadow: 5px 5px 5px gray;
+  -moz-box-shadow: 5px 5px 5px gray;
+  -ms-box-shadow: 5px 5px 5px gray;
+  -o-box-shadow: 5px 5px 5px gray;
+  
+}
+
+.circle {
+  background-image: url('/mrsoap_logo_temp3.png');
+  background-size: contain;
+  background-position: center;
+  width: 250px; 
+  height: 250px;
+  background-color: #550000;
+  margin: 2px;
+  border-radius: 50%; 
+  display: flex;
+  align-items: center; 
+  justify-content: center; 
+  color: white; 
+}

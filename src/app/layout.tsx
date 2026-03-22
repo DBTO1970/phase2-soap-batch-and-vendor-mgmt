@@ -1,8 +1,13 @@
 import type { Metadata } from "next";
 import Providers from "./components/Providers";
 import Navbar from "./components/Navbar";
+import Footer from "./components/Footer";
 import { Geist, Geist_Mono } from "next/font/google";
+import "@fortawesome/fontawesome-svg-core/styles.css";
+import { config } from "@fortawesome/fontawesome-svg-core";
 import "./globals.css";
+
+config.autoAddCss = false;
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -34,7 +39,8 @@ export default function RootLayout({
           <main className="w-full max-w-7xl mx-auto p-4">
             {children}
           </main>
-        </Providers>
+          <Footer />
+        </Providers>        
       </body>
     </html>
   );

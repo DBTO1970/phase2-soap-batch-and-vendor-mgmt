@@ -13,7 +13,7 @@ export async function sendEmail(formData: FormData) {
   try {
     const data = await resend.emails.send({
       from: 'Morning Rituals Soap', // Later, use your own domain
-      to: ['contact@morningriualsoap.com'], // WHERE YOU WANT TO RECEIVE THE LEAD
+      to: ['contact@morningritualsoap.com'], // WHERE YOU WANT TO RECEIVE THE LEAD
       subject: `New Vendor Inquiry: ${company || name}`,
       replyTo: email,
       html: `

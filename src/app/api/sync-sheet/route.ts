@@ -14,7 +14,7 @@ export async function POST(request: Request) {
 
   try {
     const body = await request.json();
-    
+    console.log("Incoming Payload:", body);
     // 2. Validation
     const sId = String(body.sheetId || "").trim();
     const sName = String(body.name || "").trim();

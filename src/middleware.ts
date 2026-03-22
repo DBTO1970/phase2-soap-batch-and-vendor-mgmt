@@ -7,7 +7,7 @@ export async function middleware(req: NextRequest) {
 
   // 1. EXCEPTION: Allow Google Sheets to bypass Middleware entirely
   // We check this BEFORE searching for a session token to save resources
-  if (pathname === "/api/sync-sheet") {
+  if (pathname.startsWith("/api/sync-sheet")) {
     return NextResponse.next();
   }
 

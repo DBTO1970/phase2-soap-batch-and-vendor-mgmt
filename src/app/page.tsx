@@ -21,7 +21,7 @@ export default function Home() {
             Connect with Our Local Team
           </Link>
         </div>
-        <div className="flex-1 min-w-[300px] flex justify-end mt-8 md:mt-0">
+        <div className="flex-1 md:min-w-[300px] flex justify-end mt-8 md:mt-0">
           <div className="relative w-full max-w-[350px] aspect-square">
             <Image
               src="/IMG_5573.jpg"
@@ -29,7 +29,7 @@ export default function Home() {
               fill
               className="rounded-2xl object-cover"
               priority
-              sizes="width: 100vw, height: auto"
+              sizes="width: 80vw, height: auto"
               unoptimized
             />
           </div>

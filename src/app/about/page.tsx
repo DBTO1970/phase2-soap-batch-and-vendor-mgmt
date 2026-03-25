@@ -70,7 +70,7 @@ export default function AboutPage() {
           >
             Charleston Coffee Exchange
           </a>{" "}
-          since 2019. We love using their local coffee in every bar.
+          since 2019. We love using their brew in our coffee soap bars.
         </p>
         <div className="relative w-full max-w-[300px] aspect-[3/1] mx-auto">
           <Image

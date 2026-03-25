@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLock, faChartLine } from "@fortawesome/free-solid-svg-icons";
+import { faFacebook, faInstagram } from "@fortawesome/free-brands-svg-icons";
 
 export default function Footer() {
   const { data: session } = useSession();
@@ -29,7 +30,14 @@ export default function Footer() {
           >
             Our Coffee Partner
           </a>
+          <a className="hover:text-blue-600 transition" href="https://www.facebook.com/Morning-Rituals-Soap-107016931918107" target="_blank" rel="noreferrer" aria-label="Facebook">
+            <FontAwesomeIcon icon={faFacebook} className="px-2 text-xl" style={{ textShadow: "1px 1px 2px gray" }} />
+          </a>
+          <a className="hover:text-blue-600 transition" href="https://www.instagram.com/morning_rituals_soap/" target="_blank" rel="noreferrer" aria-label="Instagram">
+            <FontAwesomeIcon icon={faInstagram} className="px-2 text-xl" style={{ textShadow: "1px 1px 2px gray" }} />
+          </a>
         </div>
+        
 
         {/* The "Secret" Admin Door */}
         <div className="opacity-40 hover:opacity-100 transition-opacity">

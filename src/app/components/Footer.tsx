@@ -23,13 +23,13 @@ export default function Footer() {
         <div className="flex gap-6 text-sm font-medium text-gray-600">
           <Link href="/about" className="hover:text-blue-600 transition">About</Link>
           <Link href="/contact" className="hover:text-blue-600 transition">Wholesale</Link>
-          <a 
+          {/* <a 
             href="https://www.charlestoncoffeeexchange.com/" 
             target="_blank" 
             className="hover:text-blue-600 transition"
           >
             Our Coffee Partner
-          </a>
+          </a> */}
           <a className="hover:text-blue-600 transition" href="https://www.facebook.com/Morning-Rituals-Soap-107016931918107" target="_blank" rel="noreferrer" aria-label="Facebook">
             <FontAwesomeIcon icon={faFacebook} className="px-2 text-xl" style={{ textShadow: "1px 1px 2px gray" }} />
           </a>

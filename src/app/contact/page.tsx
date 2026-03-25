@@ -2,20 +2,23 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { sendEmail } from './actions';
+import { createLeadInZoho } from './actions';
 
 export default function ContactPage() {
   const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const router = useRouter();
 
   async function handleSubmit(formData: FormData) {
     setStatus('sending');
-    const result = await sendEmail(formData);
+    setErrorMessage(null);
+    const result = await createLeadInZoho(formData);
 
     if (result.success) {
       setStatus('success');
     } else {
       setStatus('error');
+      setErrorMessage(result.error || 'There was an error sending your message. Please try again.');
     }
   }
 
@@ -97,7 +100,7 @@ export default function ContactPage() {
 
           {status === 'error' && (
             <p className="text-red-600 text-center text-sm font-medium">
-              There was an error sending your message. Please try again.
+              {errorMessage}
             </p>
           )}
         </form>

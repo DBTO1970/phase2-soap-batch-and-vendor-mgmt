@@ -127,8 +127,39 @@ export default async function InventoryPage({
           )}
         </div>
         
-        <div className="overflow-x-auto overflow-y-auto max-h-[600px]">
-          <table className="min-w-full divide-y divide-gray-200 border-separate border-spacing-0">
+        <div className="overflow-y-auto max-h-[600px]">
+          {/* Mobile Card View (Visible only on small screens) */}
+          <div className="md:hidden divide-y divide-gray-200">
+            {batches.map((batch) => {
+              const isReady = batch.readyDate && new Date(batch.readyDate) <= now;
+              const total = (batch.onHandLabeled || 0) + (batch.onHandUnlabeled || 0);
+              return (
+                <div key={batch.id} className="p-4 space-y-3 hover:bg-gray-50 transition-colors">
+                  <div className="flex justify-between items-start">
+                    <div className="max-w-[70%]">
+                      <div className="text-sm font-bold text-gray-900 truncate">{batch.name}</div>
+                      <div className="text-[10px] text-gray-400 font-mono uppercase">{batch.sheetId}</div>
+                    </div>
+                    <span className={`px-2.5 py-1 rounded-md text-xs font-bold whitespace-nowrap ${total < 2 ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-800'}`}>
+                      {total} units
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center text-[10px] font-medium text-gray-500 uppercase tracking-tighter">
+                    <div className="flex gap-3">
+                      <span>Lab: <span className="text-gray-900">{batch.onHandLabeled}</span></span>
+                      <span>Unlab: <span className="text-gray-900">{batch.onHandUnlabeled}</span></span>
+                    </div>
+                    <span className={`px-2 py-0.5 rounded font-bold ${isReady ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'}`}>
+                      {batch.readyDate ? new Date(batch.readyDate).toLocaleDateString() : 'N/A'}
+                    </span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Desktop Table View (Hidden on mobile) */}
+          <table className="hidden md:table min-w-full divide-y divide-gray-200 border-separate border-spacing-0">
             <thead className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
               <tr>
                 <th className="sticky top-0 z-10 bg-gray-50 border-b px-6 py-4 text-left shadow-[inset_0_-1px_0_rgba(0,0,0,0.05)]">Soap Name</th>

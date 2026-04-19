@@ -10,9 +10,10 @@ export const authConfig = {
     authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user;
       const isOnAdmin = nextUrl.pathname.startsWith("/admin");
+      const isOnRegister = nextUrl.pathname.startsWith("/register");
       const isOnProtected = nextUrl.pathname.startsWith("/inventory") || nextUrl.pathname.startsWith("/batches");
 
-      if (isOnAdmin || isOnProtected) {
+      if (isOnAdmin || isOnProtected || isOnRegister) {
         if (isLoggedIn) return true;
         return false; // Redirect to /login
       }

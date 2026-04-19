@@ -315,7 +315,7 @@ export default function AdminBatches() {
                     type="number"
                     className="w-20 border rounded p-1"
                     defaultValue={b.onHandLabeled}
-                    onBlur={(e) => updateQuantity(b.id, 'onHandLabeled', parseInt(e.target.value))}
+                    onBlur={(e) => updateQuantity(b.id, 'onHandLabeled', Number(e.target.value) || 0)}
                   />
                 </td>
                 <td className="px-6 py-4">
@@ -323,7 +323,7 @@ export default function AdminBatches() {
                     type="number"
                     className="w-20 border rounded p-1"
                     defaultValue={b.onHandUnlabeled}
-                    onBlur={(e) => updateQuantity(b.id, 'onHandUnlabeled', parseInt(e.target.value))}
+                    onBlur={(e) => updateQuantity(b.id, 'onHandUnlabeled', Number(e.target.value) || 0)}
                   />
                 </td>
                 <td className="px-6 py-4">

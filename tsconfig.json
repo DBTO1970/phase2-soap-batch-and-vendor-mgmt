@@ -29,6 +29,6 @@
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts",
     "**/*.mts"
-, "prisma.config.ts.bak", "test-db.js"  ],
+, "prisma.config.ts.bak", "test-db.js", "src/app/actions/auth.ts"  ],
   "exclude": ["node_modules"]
 }

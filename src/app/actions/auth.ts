@@ -1,7 +1,7 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
-import { signIn } from "../api/auth/[...nextauth]/route";
+import { signIn } from "@/auth";
 
 export async function signInAction(email: string) {
     try {
@@ -13,4 +13,3 @@ export async function signInAction(email: string) {
     return { success: false, message: "Sign in failed" };
   }
 }
-

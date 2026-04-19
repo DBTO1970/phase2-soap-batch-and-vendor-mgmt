@@ -97,19 +97,29 @@ export default function AdminBatches() {
   };
 
   const updateQuantity = async (id: string, field: string, value: number) => {
-    const safeValue = isNaN(value) ? 0 : value;
-    await fetch(`/api/batches/${id}`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ [field]: safeValue }),
-    });
-    fetchBatches();
+    try {
+      const safeValue = isNaN(value) ? 0 : value;
+      const res = await fetch(`/api/batches/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ [field]: safeValue }),
+      });
+      if (!res.ok) throw new Error('Failed to update');
+      fetchBatches();
+    } catch (err) {
+      alert('Failed to update quantity. Please check your connection.');
+    }
   };
 
   const deleteBatch = async (id: string) => {
     if (!confirm('Are you sure?')) return;
-    await fetch(`/api/batches/${id}`, { method: 'DELETE' });
-    fetchBatches();
+    try {
+      const res = await fetch(`/api/batches/${id}`, { method: 'DELETE' });
+      if (!res.ok) throw new Error('Failed to delete');
+      fetchBatches();
+    } catch (err) {
+      alert('Failed to delete batch.');
+    }
   };
 
   return (

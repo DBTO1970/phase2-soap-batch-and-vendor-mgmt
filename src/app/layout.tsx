@@ -3,8 +3,10 @@ import Providers from "./components/Providers";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import { Geist, Geist_Mono } from "next/font/google";
+// @ts-ignore
 import "@fortawesome/fontawesome-svg-core/styles.css";
 import { config } from "@fortawesome/fontawesome-svg-core";
+// @ts-ignore
 import "./globals.css";
 
 config.autoAddCss = false;

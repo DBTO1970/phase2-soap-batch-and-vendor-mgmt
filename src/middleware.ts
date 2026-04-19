@@ -1,43 +1,19 @@
-// middleware.ts
-
 import NextAuth from "next-auth";
-import { authConfig } from "./lib/auth.config"; // Point to the new file
+import { authConfig } from "./auth.config";
 import { NextResponse } from "next/server";
 
 const { auth } = NextAuth(authConfig);
 
-const publicRoutes = ["/", "/about", "/contact", "/login", "/api/sync-sheet"];
-
-export default auth((req) => {
-  const { nextUrl } = req;
+export default auth((req: any) => {
   const isLoggedIn = !!req.auth;
-  const pathname = nextUrl.pathname;
+  const isOnAdmin = req.nextUrl.pathname.startsWith("/admin");
+  const isOnProtected = req.nextUrl.pathname.startsWith("/inventory") || req.nextUrl.pathname.startsWith("/batches");
 
-  if (
-    pathname.startsWith('/_next') || 
-    pathname.includes('.') || 
-    pathname.startsWith('/api')
-  ) {
-    return NextResponse.next();
+  if ((isOnAdmin || isOnProtected) && !isLoggedIn) {
+    return NextResponse.redirect(new URL("/login", req.nextUrl));
   }
-
- const isPublicRoute = publicRoutes.includes(pathname);
-
-  if (isPublicRoute) {
-    if (isLoggedIn && pathname === "/login") {
-      return NextResponse.redirect(new URL("/inventory", nextUrl));
-    }
-    return NextResponse.next();
-  }
-
-  // 3. Protect everything else
-  if (!isLoggedIn) {
-    return NextResponse.redirect(new URL("/login", nextUrl));
-  }
-
-  return NextResponse.next();
 });
 
 export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|favicon.ico|robots.txt|.*\\..*).*)"],
+  matcher: ["/admin/:path*", "/inventory/:path*", "/batches/:path*", "/api/batches/:path*"],
 };

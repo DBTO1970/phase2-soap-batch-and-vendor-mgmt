@@ -1,5 +1,5 @@
 // app/inventory/page.tsx
-import { auth } from "@/app/api/auth/[...nextauth]/route";
+import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import BatchControls from "../components/BatchControls";
@@ -12,7 +12,9 @@ export default async function InventoryPage({
   searchParams: Promise<{ q?: string; sort?: string; filter?: string }>;
 }) {
   const session = await auth();
-  if (!session) redirect("/login");
+  // Middleware handles the redirect to /login. 
+  // If we got here and there's no session, something is wrong with the auth config.
+  if (!session) return null;
 
   const params = await searchParams;
   const query = params.q || "";

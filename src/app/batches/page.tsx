@@ -1,9 +1,10 @@
 // app/batches/page.tsx
-import { auth } from "@/app/api/auth/[...nextauth]/route";
+import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import BatchControls from "../components/BatchControls";
 import RefreshButton from "../components/RefreshButton"; 
+import Link from "next/link";
 
 export default async function BatchesPage({
   searchParams,
@@ -63,7 +64,6 @@ export default async function BatchesPage({
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Soap Batches</h1>
-          <p className="text-gray-500 dark:text-gray-400">Live from production sheets</p>
         </div>
         <div className="text-gray-500 dark:text-gray-400 text-sm bg-gray-100 dark:bg-gray-800 px-3 py-1 rounded">
           Total Batches: {batches.length}
@@ -72,9 +72,16 @@ export default async function BatchesPage({
           Total Bars Ready: {batches.filter(b => b.readyDate && new Date(b.readyDate) <= now)
           .reduce((sum, b) => sum + (b.onHandLabeled || 0) + (b.onHandUnlabeled || 0), 0)}
         </div>
-         <RefreshButton />
-        <BatchControls currentQuery={query} currentSort={sort} />
-        
+        <div className="flex items-center gap-2">
+          <Link 
+            href="/admin" 
+            className="bg-blue-600 text-white px-4 py-2 rounded text-sm font-medium hover:bg-blue-700 transition"
+          >
+            + Add Batches
+          </Link>
+          <RefreshButton />
+          <BatchControls currentQuery={query} currentSort={sort} />
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -106,10 +113,19 @@ export default async function BatchesPage({
                   <span className="font-medium text-gray-900">{batch.fragranceOil} {batch.fragranceAmountOz} oz</span>
                 </div>
                 <div className="flex justify-between">
+                  <span className="text-gray-500">Additional Ingredients:</span>
+                  <span className="font-medium text-gray-900"> {batch.additionalIngredients}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-500">Notes: </span>
+                  <span className="font-medium text-gray-900"> {batch.notes}</span>
+                </div>
+                <div className="flex justify-between">
                   <span className="text-gray-500">Ready Date:</span>
                   <span className={`font-semibold ${new Date(batch.readyDate || 0) <= new Date() ? 'text-green-600' : 'text-orange-600'}`}>
                     {batch.readyDate ? new Date(batch.readyDate).toLocaleDateString() : 'N/A'}
                   </span>
+                 
                 </div>
               </div>
             </div>

@@ -43,7 +43,7 @@ export default function NavBar() {
                 Inventory <FontAwesomeIcon icon={faBoxesStacked} className="text-sm" />
               </Link>
 
-              {session.user?.role === "ADMIN" && (
+              {session && (
                 <Link href="/batches" className="text-lg md:text-xl text-yellow-200 hover:text-white transition flex items-center gap-2">
                   Batches <FontAwesomeIcon icon={faListCheck} className="text-sm" />
                 </Link>

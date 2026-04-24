@@ -25,12 +25,19 @@ export default function InvoiceActions({ client, inventory }: { client: Client; 
   const [notes, setNotes] = useState("");
   const [items, setItems] = useState<SelectedItem[]>([]);
 
-  // Sort inventory: Most recent ready batches on top
-  const sortedInventory = [...inventory].sort((a, b) => {
-    const dateA = a.readyDate ? new Date(a.readyDate).getTime() : 0;
-    const dateB = b.readyDate ? new Date(b.readyDate).getTime() : 0;
-    return dateB - dateA;
-  });
+  const now = new Date();
+  // Filter and sort inventory: Only items with stock AND ready today or before
+  const availableInventory = inventory
+    .filter((b) => {
+      const hasStock = (b.onHandLabeled ?? 0) + (b.onHandUnlabeled ?? 0) > 0;
+      const isReady = b.readyDate && new Date(b.readyDate) <= now;
+      return hasStock && isReady;
+    })
+    .sort((a, b) => {
+      const dateA = a.readyDate ? new Date(a.readyDate).getTime() : 0;
+      const dateB = b.readyDate ? new Date(b.readyDate).getTime() : 0;
+      return dateB - dateA;
+    });
 
   const loadInvoices = async () => {
     const data = await getInvoicesForClient(client.id);
@@ -91,7 +98,7 @@ export default function InvoiceActions({ client, inventory }: { client: Client; 
                           className="max-w-full border rounded p-1.5 text-sm" 
                           placeholder="Search batches..."
                           onChange={(e) => {
-                            const b = inventory.find(x => x.name === e.target.value);
+                            const b = availableInventory.find(x => x.name === e.target.value);
                             if (b) {
                               const newItems = [...items];
                               const available = (b.onHandLabeled ?? 0) + (b.onHandUnlabeled ?? 0);
@@ -162,6 +169,13 @@ export default function InvoiceActions({ client, inventory }: { client: Client; 
                             </span>
                           </div>
                           <p className="text-xs text-gray-400 mt-1">{new Date(inv.createdAt).toLocaleDateString()}</p>
+                          <div>
+                            {inv.items.map((item) => (
+                              <div key={item.id} className="text-sm text-gray-700">
+                                {item.batch.name} - {item.quantity} @ ${item.price.toFixed(2)} each
+                              </div>
+                            ))}
+                          </div>
                         </div>
                         <div className="flex gap-4">
                           <button onClick={() => handleDownload(inv)} className="text-indigo-600 hover:underline text-xs font-bold uppercase">PDF</button>
@@ -189,7 +203,7 @@ export default function InvoiceActions({ client, inventory }: { client: Client; 
       )}
 
       <datalist id={`inv-batches-${client.id}`}>
-        {sortedInventory.map(b => (
+        {availableInventory.map(b => (
             <option key={b.id} value={b.name}>
             {`Available: ${(b.onHandLabeled ?? 0) + (b.onHandUnlabeled ?? 0)} | Ready: ${b.readyDate ? new Date(b.readyDate).toLocaleDateString() : 'N/A'}`}
           </option>

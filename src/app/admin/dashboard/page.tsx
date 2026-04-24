@@ -1,11 +1,12 @@
 import Link from "next/link";
+import DataExportTools from "./DataExportTools";
 
 export default function AdminDashboard() {
   const adminModules = [
     {
       name: "Inventory",
       href: "/inventory",
-      description: "Manage raw materials, oils, and tracking stock levels.",
+      description: "Manage and track stock levels.",
       icon: "📦",
     },
     {
@@ -17,7 +18,7 @@ export default function AdminDashboard() {
     {
       name: "Clients",
       href: "/admin/clients",
-      description: "Manage vendor contacts and generate professional invoices.",
+      description: "Manage vendor contacts and generate invoices.",
       icon: "👥",
     },
   ];
@@ -48,6 +49,8 @@ export default function AdminDashboard() {
           </Link>
         ))}
       </div>
+
+      <DataExportTools />
     </div>
   );
 }

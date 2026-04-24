@@ -146,3 +146,21 @@ export async function deleteClient(id: string) {
   });
   revalidatePath("/admin/clients");
 }
+
+export async function getAllInvoices() {
+  return await prisma.invoice.findMany({
+    include: {
+      client: true,
+      items: {
+        include: { batch: true }
+      }
+    },
+    orderBy: { createdAt: "desc" }
+  });
+}
+
+export async function getUsers() {
+  return await prisma.user.findMany({
+    orderBy: { name: "asc" }
+  });
+}

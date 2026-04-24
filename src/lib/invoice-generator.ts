@@ -22,9 +22,9 @@ export const downloadInvoicePDF = (clientName: string, company: string, items: I
   // Business Info
   doc.setFontSize(10);
   doc.text('Morning Ritual Soap', 20, 40);
-  doc.text('contact@morningritualsoap.com', 20, 45);
   doc.text('8710 Oxwell Ln', 20, 50);
   doc.text('Laurel, MD 20708', 20, 55);
+  doc.text('contact@morningritualsoap.com', 20, 45);
 
   // Client Info
   doc.text(`Bill To: ${clientName}`, 20, 60);

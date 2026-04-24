@@ -41,7 +41,10 @@ export default function InvoiceActions({ client, inventory }: { client: Client; 
   const handleSave = async () => {
     if (items.length === 0) return alert("Add items first");
     try {
-      await saveInvoice(client.id, items, notes);
+      const newInvoice = await saveInvoice(client.id, items, notes);
+      // Trigger the automatic PDF download using the returned invoice data
+      handleDownload(newInvoice as InvoiceWithItems);
+
       setItems([]);
       setNotes("");
       setView('none');
@@ -85,7 +88,7 @@ export default function InvoiceActions({ client, inventory }: { client: Client; 
                         <label className="text-[10px] font-bold text-gray-400 uppercase mb-1 block">Select Soap</label>
                         <input 
                           list={`inv-batches-${client.id}`} 
-                          className="w-full border rounded p-1.5 text-sm" 
+                          className="max-w-full border rounded p-1.5 text-sm" 
                           placeholder="Search batches..."
                           onChange={(e) => {
                             const b = inventory.find(x => x.name === e.target.value);
@@ -104,7 +107,7 @@ export default function InvoiceActions({ client, inventory }: { client: Client; 
                           }}
                         />
                       </div>
-                      <div className="w-20">
+                      <div className="w-fit min-w-[80px]">
                         <label className="text-[10px] font-bold text-gray-400 uppercase mb-1 block">Qty</label>
                         <input 
                           type="number" 
@@ -121,7 +124,7 @@ export default function InvoiceActions({ client, inventory }: { client: Client; 
                           setItems(newItems);
                         }} />
                       </div>
-                      <div className="w-24">
+                      <div className="w-fit min-w-[100px]">
                         <label className="text-[10px] font-bold text-gray-400 uppercase mb-1 block">Price/Bar</label>
                         <input type="number" step="0.01" value={item.price} className="w-full border rounded p-1.5 text-sm" onChange={(e) => {
                           const newItems = [...items];

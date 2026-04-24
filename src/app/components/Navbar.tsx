@@ -38,7 +38,9 @@ export default function NavBar() {
           {session && (
             <>
               <div className="hidden md:block w-px h-6 bg-white/30" /> {/* Vertical Divider */}
-              
+              <Link href="/admin/dashboard" className="text-lg md:text-xl text-yellow-200 hover:text-white transition flex items-center gap-2">
+                Admin Dashboard
+              </Link>
               <Link href="/inventory" className="text-lg md:text-xl text-yellow-200 hover:text-white transition flex items-center gap-2">
                 Inventory <FontAwesomeIcon icon={faBoxesStacked} className="text-sm" />
               </Link>

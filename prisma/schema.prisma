@@ -50,6 +50,7 @@ model SoapBatch {
   lyeTemp               Float?   @default(0)
   notes                 String?  @default("")
   updatedAt DateTime @default(now()) @updatedAt
+  invoiceItems          InvoiceItem[]
 }
 
 model Account {
@@ -85,4 +86,36 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+model Client {
+  id        String    @id @default(cuid())
+  name      String
+  email     String    @unique
+  company   String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  invoices  Invoice[]
+}
+
+model Invoice {
+  id        String   @id @default(cuid())
+  amount    Float
+  status    String   @default("PENDING")
+  notes     String?
+  createdAt DateTime @default(now())
+  clientId  String
+  client    Client   @relation(fields: [clientId], references: [id])
+  items     InvoiceItem[]
+}
+
+model InvoiceItem {
+  id        String    @id @default(cuid())
+  invoiceId String
+  invoice   Invoice   @relation(fields: [invoiceId], references: [id])
+  batchId   String
+  batch     SoapBatch @relation(fields: [batchId], references: [id])
+  quantity  Int
+  price     Float     // Price per unit
+  createdAt DateTime  @default(now())
 }

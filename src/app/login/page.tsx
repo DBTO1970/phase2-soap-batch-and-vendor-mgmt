@@ -24,7 +24,7 @@ export default function LoginPage() {
       email,
       password,
       redirect: true,
-      callbackUrl: "/inventory", 
+      callbackUrl: "/admin/dashboard", 
     });
     if (error) {
       setError("Login failed. Check your credentials.");

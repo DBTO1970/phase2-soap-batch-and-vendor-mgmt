@@ -1,5 +1,6 @@
 "use server";
 
+import { prisma } from "@/lib/prisma";
 // This action is designed to integrate with Zoho CRM to create a new lead.
 
 async function getZohoAccessToken() {
@@ -87,19 +88,32 @@ async function sendEmailNotice(name: string, email: string, message: string, com
     const accessToken = await getZohoAccessToken();
     const accountId = await getZohoMailAccountId(accessToken);
     const region = process.env.ZOHO_REGION || "com";
+    const fromEmail = "contact@morningritualsoap.com";
 
     const emailBody = {
-      // Note: fromAddress must be a verified alias or the primary address of your Zoho account
-      fromAddress: "contact@morningritualsoap.com", 
-      toAddress: "contact@morningritualsoap.com",
+      fromAddress: fromEmail, 
+      toAddress: fromEmail,
       subject: `New Contact Form Submission: ${name}`,
       content: `
-        Name: ${name}
-        Email: ${email}
-        Company: ${company || 'N/A'}
-        
-        Message:
-        ${message}
+        <div style="font-family: sans-serif; line-height: 1.5; color: #333;">
+          <h2 style="color: #6366f1;">New Inquiry Received</h2>
+          <table style="width: 100%; border-collapse: collapse;">
+            <tr>
+              <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Name:</strong></td>
+              <td style="padding: 8px 0; border-bottom: 1px solid #eee;">${name}</td>
+            </tr>
+            <tr>
+              <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Email:</strong></td>
+              <td style="padding: 8px 0; border-bottom: 1px solid #eee;">${email}</td>
+            </tr>
+            <tr>
+              <td style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>Company:</strong></td>
+              <td style="padding: 8px 0; border-bottom: 1px solid #eee;">${company || 'N/A'}</td>
+            </tr>
+          </table>
+          <p style="margin-top: 20px;"><strong>Message:</strong></p>
+          <div style="padding: 15px; background: #f9fafb; border-radius: 4px;">${message.replace(/\n/g, '<br>')}</div>
+        </div>
       `,
       askReceipt: "no"
     };
@@ -169,6 +183,18 @@ export async function createLeadInZoho(formData: FormData) {
     if (responseData.data && responseData.data[0].status === 'success') {
       // If lead creation succeeds, try to send the email notice directly
       await sendEmailNotice(name, email, message, company);
+
+      // Save to local database
+      await prisma.client.upsert({
+        where: { email },
+        update: { name, company },
+        create: {
+          name,
+          email,
+          company,
+        },
+      });
+
       return { success: true };
     } else {
       // Return detailed error message to help debugging

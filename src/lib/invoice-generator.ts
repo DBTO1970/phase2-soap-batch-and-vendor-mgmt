@@ -72,5 +72,5 @@ export const downloadInvoicePDF = (clientName: string, company: string, items: I
   doc.setFont("helvetica", "bold");
   doc.text(`Total Amount Due: $${grandTotal.toFixed(2)}`, 130, totalY);
 
-  doc.save(`${invoiceId}_${clientName.replace(/\s+/g, '_')}.pdf`);
+  doc.save(`${invoiceId}_${company.replace(/\s+/g, '_')}.pdf`);
 };

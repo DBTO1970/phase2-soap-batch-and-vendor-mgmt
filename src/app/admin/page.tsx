@@ -54,7 +54,16 @@ export default function AdminBatches() {
 
   const handleInputChange = (index: number, field: keyof BatchEntry, value: any) => {
     const updated = [...newEntries];
-    updated[index] = { ...updated[index], [field]: value };
+    const newEntry = { ...updated[index], [field]: value };
+
+    // Auto-calculate readyDate (Made Date + 21 days) when madeDate changes
+    if (field === 'madeDate' && value) {
+      const date = new Date(value + 'T12:00:00');
+      date.setDate(date.getDate() + 21);
+      newEntry.readyDate = date.toISOString().split('T')[0];
+    }
+
+    updated[index] = newEntry;
     setNewEntries(updated);
   };
 

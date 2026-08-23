@@ -1,5 +1,5 @@
 "use client";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 export default function BatchControls({ currentQuery, currentSort }: { currentQuery: string, currentSort: string }) {
   const router = useRouter();
@@ -40,8 +40,8 @@ export default function BatchControls({ currentQuery, currentSort }: { currentQu
       >
         <option value="readyDate_desc">Ready Date (Newest)</option>
         <option value="readyDate_asc">Ready Date (Oldest)</option>
-        <option value="total_desc">Total Stock (High to Low)</option>
-        <option value="total_asc">Total Stock (Low to High)</option>
+        <option value="total_desc">Total Bars (High to Low)</option>
+        <option value="total_asc">Total Bars (Low to High)</option>
       </select>
     </div>
   );

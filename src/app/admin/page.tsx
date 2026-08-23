@@ -5,8 +5,7 @@ import { useState, useEffect } from 'react';
 type BatchEntry = {
   name: string;
   recipe: string;
-  onHandLabeled: string | number;
-  onHandUnlabeled: string | number;
+  totalBars: string | number;
   madeDate: string;
   readyDate: string;
   waterOz: string | number;
@@ -26,7 +25,7 @@ export default function AdminBatches() {
 
   function emptyEntry(): BatchEntry {
     return {
-      name: '', recipe: '', onHandLabeled: 0, onHandUnlabeled: 0,
+      name: '', recipe: '', totalBars: 0,
       madeDate: '', readyDate: '', waterOz: 0, fragranceOil: '',
       fragranceAmountOz: 0, notes: '', additionalIngredients: '',
       oilTemp: 0,
@@ -72,16 +71,19 @@ export default function AdminBatches() {
     setLoading(true);
     
     // Prepare entries: auto-generate sheetId and ensure correct data types for Prisma
-    const entriesToSave = newEntries.map(entry => ({
-      ...entry,
-      sheetId: `BATCH-${Math.random().toString(36).substring(2, 9).toUpperCase()}`,
-      onHandLabeled: Number(entry.onHandLabeled) || 0,
-      onHandUnlabeled: Number(entry.onHandUnlabeled) || 0,
-      waterOz: Number(entry.waterOz) || 0,
-      fragranceAmountOz: Number(entry.fragranceAmountOz) || 0,
-      oilTemp: Number(entry.oilTemp) || 0,
-      lyeTemp: Number(entry.lyeTemp) || 0,
-    }));
+    const entriesToSave = newEntries.map((entry) => {
+      const { totalBars, ...entryData } = entry;
+      return {
+        ...entryData,
+        sheetId: `BATCH-${Math.random().toString(36).substring(2, 9).toUpperCase()}`,
+        onHandLabeled: Number(totalBars) || 0,
+        onHandUnlabeled: 0,
+        waterOz: Number(entry.waterOz) || 0,
+        fragranceAmountOz: Number(entry.fragranceAmountOz) || 0,
+        oilTemp: Number(entry.oilTemp) || 0,
+        lyeTemp: Number(entry.lyeTemp) || 0,
+      };
+    });
 
     try {
       const res = await fetch('/api/batches', {
@@ -105,13 +107,13 @@ export default function AdminBatches() {
     }
   };
 
-  const updateQuantity = async (id: string, field: string, value: number) => {
+  const updateTotalBars = async (id: string, totalBars: number) => {
     try {
-      const safeValue = isNaN(value) ? 0 : value;
+      const safeValue = isNaN(totalBars) ? 0 : totalBars;
       const res = await fetch(`/api/batches/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ [field]: safeValue }),
+        body: JSON.stringify({ onHandLabeled: safeValue, onHandUnlabeled: 0 }),
       });
       if (!res.ok) throw new Error('Failed to update');
       fetchBatches();
@@ -187,21 +189,12 @@ export default function AdminBatches() {
                 />
               </div>
               <div className="flex flex-col">
-                <label className="text-xs font-bold text-slate-500 uppercase">Labeled Qty</label>
+                <label className="text-xs font-bold text-slate-500 uppercase">Total Bars</label>
                 <input
                   type="number"
                   className="border p-2 rounded"
-                  value={entry.onHandLabeled}
-                  onChange={(e) => handleInputChange(idx, 'onHandLabeled', e.target.value)}
-                />
-              </div>
-              <div className="flex flex-col">
-                <label className="text-xs font-bold text-slate-500 uppercase">Unlabeled Qty</label>
-                <input
-                  type="number"
-                  className="border p-2 rounded"
-                  value={entry.onHandUnlabeled}
-                  onChange={(e) => handleInputChange(idx, 'onHandUnlabeled', e.target.value)}
+                  value={entry.totalBars}
+                  onChange={(e) => handleInputChange(idx, 'totalBars', e.target.value)}
                 />
               </div>
               <div className="flex flex-col">
@@ -299,8 +292,7 @@ export default function AdminBatches() {
               <th className="px-6 py-3">Batch Name</th>
               <th className="px-6 py-3">Notes/Additions</th>
               <th className="px-6 py-3">Dates</th>
-              <th className="px-6 py-3">Labeled</th>
-              <th className="px-6 py-3">Unlabeled</th>
+              <th className="px-6 py-3">Total Bars</th>
               <th className="px-6 py-3">Actions</th>
             </tr>
           </thead>
@@ -323,16 +315,8 @@ export default function AdminBatches() {
                   <input
                     type="number"
                     className="w-20 border rounded p-1"
-                    defaultValue={b.onHandLabeled}
-                    onBlur={(e) => updateQuantity(b.id, 'onHandLabeled', Number(e.target.value) || 0)}
-                  />
-                </td>
-                <td className="px-6 py-4">
-                  <input
-                    type="number"
-                    className="w-20 border rounded p-1"
-                    defaultValue={b.onHandUnlabeled}
-                    onBlur={(e) => updateQuantity(b.id, 'onHandUnlabeled', Number(e.target.value) || 0)}
+                    defaultValue={(b.onHandLabeled || 0) + (b.onHandUnlabeled || 0)}
+                    onBlur={(e) => updateTotalBars(b.id, Number(e.target.value) || 0)}
                   />
                 </td>
                 <td className="px-6 py-4">

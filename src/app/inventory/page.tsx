@@ -1,7 +1,6 @@
 // app/inventory/page.tsx
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
-import { redirect } from "next/navigation";
 import BatchControls from "../components/BatchControls";
 import RefreshButton from "../components/RefreshButton"; 
 import Link from "next/link";
@@ -22,30 +21,30 @@ export default async function InventoryPage({
   const activeFilter = params.filter || ""; // 'ready', 'curing', 'low'
   const now = new Date();
   now.setHours(0, 0, 0, 0);
+  const getTotalBars = (batch: { onHandLabeled: number | null; onHandUnlabeled: number | null }) =>
+    (batch.onHandLabeled || 0) + (batch.onHandUnlabeled || 0);
 
   // 1. Fetch filtered data
-  const rawBatches = await prisma.soapBatch.findMany({
+  const fetchedBatches = await prisma.soapBatch.findMany({
     where: {
-      AND: [
-        { OR: [{ onHandLabeled: { gte: 1 } }, { onHandUnlabeled: { gte: 1 } }] },
-        query ? {
-          OR: [
-            { name: { contains: query, mode: "insensitive" } },
-            { fragranceOil: { contains: query, mode: "insensitive" } },
-          ],
-        } : {},
-      ]
+      ...(query ? {
+        OR: [
+          { name: { contains: query, mode: "insensitive" } },
+          { fragranceOil: { contains: query, mode: "insensitive" } },
+        ],
+      } : {}),
     },
   });
+  const rawBatches = fetchedBatches.filter((batch) => getTotalBars(batch) > 0);
 
   // 2. Calculations (Done on full set)
   const readyBatches = rawBatches.filter(b => b.readyDate && new Date(b.readyDate) <= now);
-  const totalReadyBars = readyBatches.reduce((sum, b) => sum + (b.onHandLabeled || 0) + (b.onHandUnlabeled || 0), 0);
+  const totalReadyBars = readyBatches.reduce((sum, b) => sum + getTotalBars(b), 0);
 
   const curingBatches = rawBatches.filter(b => b.readyDate && new Date(b.readyDate) > now);
-  const comingSoonBars = curingBatches.reduce((sum, b) => sum + (b.onHandLabeled || 0) + (b.onHandUnlabeled || 0), 0);
+  const comingSoonBars = curingBatches.reduce((sum, b) => sum + getTotalBars(b), 0);
 
-  const lowInventoryBatches = rawBatches.filter(b => ((b.onHandLabeled || 0) + (b.onHandUnlabeled || 0)) < 2);
+  const lowInventoryBatches = rawBatches.filter((b) => getTotalBars(b) < 2);
 
   // 3. Apply Box Filtering
   let filteredList = [...rawBatches];
@@ -55,8 +54,8 @@ export default async function InventoryPage({
 
   // 4. Sorting
   const batches = filteredList.sort((a, b) => {
-    const totalA = (a.onHandLabeled || 0) + (a.onHandUnlabeled || 0);
-    const totalB = (b.onHandLabeled || 0) + (b.onHandUnlabeled || 0);
+    const totalA = getTotalBars(a);
+    const totalB = getTotalBars(b);
     switch (sort) {
       case "readyDate_asc": return new Date(a.readyDate || 0).getTime() - new Date(b.readyDate || 0).getTime();
       case "total_desc": return totalB - totalA;
@@ -112,7 +111,7 @@ export default async function InventoryPage({
         <Link href={getFilterUrl("low")} className={`block p-6 rounded-2xl border transition-all hover:scale-[1.02] shadow-sm ${activeFilter === 'low' ? 'bg-red-600 border-red-700 text-white ring-4 ring-red-100' : 'bg-red-50 border-red-200 text-red-900'}`}>
           <p className={`text-sm font-semibold uppercase tracking-wider ${activeFilter === 'low' ? 'text-red-100' : 'text-red-600'}`}>Low Inventory</p>
           <p className="text-4xl font-black mt-2">{lowInventoryBatches.length}</p>
-          <p className={`text-xs mt-1 italic ${activeFilter === 'low' ? 'text-red-100' : 'text-red-700'}`}>Items with &lt; 2 units</p>
+          <p className={`text-xs mt-1 italic ${activeFilter === 'low' ? 'text-red-100' : 'text-red-700'}`}>Batches with &lt; 2 bars</p>
         </Link>
       </div>
 
@@ -134,7 +133,7 @@ export default async function InventoryPage({
           <div className="md:hidden divide-y divide-gray-200">
             {batches.map((batch) => {
               const isReady = batch.readyDate && new Date(batch.readyDate) <= now;
-              const total = (batch.onHandLabeled || 0) + (batch.onHandUnlabeled || 0);
+              const total = getTotalBars(batch);
               return (
                 <div key={batch.id} className="p-4 space-y-3 hover:bg-gray-50 transition-colors">
                   <div className="flex justify-between items-start">
@@ -143,14 +142,11 @@ export default async function InventoryPage({
                       <div className="text-[10px] text-gray-400 font-mono uppercase">{batch.sheetId}</div>
                     </div>
                     <span className={`px-2.5 py-1 rounded-md text-xs font-bold whitespace-nowrap ${total < 2 ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-800'}`}>
-                      {total} units
+                      {total} bars
                     </span>
                   </div>
                   <div className="flex justify-between items-center text-[10px] font-medium text-gray-500 uppercase tracking-tighter">
-                    <div className="flex gap-3">
-                      <span>Lab: <span className="text-gray-900">{batch.onHandLabeled}</span></span>
-                      <span>Unlab: <span className="text-gray-900">{batch.onHandUnlabeled}</span></span>
-                    </div>
+                    <span>Total Bars: <span className="text-gray-900">{total}</span></span>
                     <span className={`px-2 py-0.5 rounded font-bold ${isReady ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'}`}>
                       {batch.readyDate ? new Date(batch.readyDate).toLocaleDateString() : 'N/A'}
                     </span>
@@ -165,24 +161,20 @@ export default async function InventoryPage({
             <thead className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
               <tr>
                 <th className="sticky top-0 z-10 bg-gray-50 border-b px-6 py-4 text-left shadow-[inset_0_-1px_0_rgba(0,0,0,0.05)]">Soap Name</th>
-                <th className="sticky top-0 z-10 bg-gray-50 border-b px-6 py-4 text-center shadow-[inset_0_-1px_0_rgba(0,0,0,0.05)]">Labeled</th>
-                <th className="sticky top-0 z-10 bg-gray-50 border-b px-6 py-4 text-center shadow-[inset_0_-1px_0_rgba(0,0,0,0.05)]">Unlabeled</th>
-                <th className="sticky top-0 z-10 bg-gray-50 border-b px-6 py-4 text-center shadow-[inset_0_-1px_0_rgba(0,0,0,0.05)]">Total</th>
+                <th className="sticky top-0 z-10 bg-gray-50 border-b px-6 py-4 text-center shadow-[inset_0_-1px_0_rgba(0,0,0,0.05)]">Total Bars</th>
                 <th className="sticky top-0 z-10 bg-gray-50 border-b px-6 py-4 text-right shadow-[inset_0_-1px_0_rgba(0,0,0,0.05)]">Ready Date</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {batches.map((batch) => {
                 const isReady = batch.readyDate && new Date(batch.readyDate) <= now;
-                const total = (batch.onHandLabeled || 0) + (batch.onHandUnlabeled || 0);
+                const total = getTotalBars(batch);
                 return (
                   <tr key={batch.id} className="hover:bg-gray-50 transition-colors group">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm font-bold text-gray-900 group-hover:text-blue-600 transition-colors">{batch.name}</div>
                       <div className="text-[10px] text-gray-400 font-mono uppercase">{batch.sheetId}</div>
                     </td>
-                    <td className="px-6 py-4 text-center text-sm font-medium">{batch.onHandLabeled}</td>
-                    <td className="px-6 py-4 text-center text-sm">{batch.onHandUnlabeled}</td>
                     <td className="px-6 py-4 text-center">
                       <span className={`px-2.5 py-1 rounded-md text-xs font-bold ${total < 2 ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-800'}`}>
                         {total}

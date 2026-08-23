@@ -24,12 +24,13 @@ export default function InvoiceActions({ client, inventory }: { client: Client; 
   const [invoices, setInvoices] = useState<InvoiceWithItems[]>([]);
   const [notes, setNotes] = useState("");
   const [items, setItems] = useState<SelectedItem[]>([]);
+  const getTotalBars = (batch: SoapBatch) => (batch.onHandLabeled ?? 0) + (batch.onHandUnlabeled ?? 0);
 
   const now = new Date();
   // Filter and sort inventory: Only items with stock AND ready today or before
   const availableInventory = inventory
     .filter((b) => {
-      const hasStock = (b.onHandLabeled ?? 0) + (b.onHandUnlabeled ?? 0) > 0;
+      const hasStock = getTotalBars(b) > 0;
       const isReady = b.readyDate && new Date(b.readyDate) <= now;
       return hasStock && isReady;
     })
@@ -101,7 +102,7 @@ export default function InvoiceActions({ client, inventory }: { client: Client; 
                             const b = availableInventory.find(x => x.name === e.target.value);
                             if (b) {
                               const newItems = [...items];
-                              const available = (b.onHandLabeled ?? 0) + (b.onHandUnlabeled ?? 0);
+                              const available = getTotalBars(b);
                               newItems[idx] = { 
                                 ...newItems[idx], 
                                 batchId: b.id, 
@@ -205,7 +206,7 @@ export default function InvoiceActions({ client, inventory }: { client: Client; 
       <datalist id={`inv-batches-${client.id}`}>
         {availableInventory.map(b => (
             <option key={b.id} value={b.name}>
-            {`Available: ${(b.onHandLabeled ?? 0) + (b.onHandUnlabeled ?? 0)} | Ready: ${b.readyDate ? new Date(b.readyDate).toLocaleDateString() : 'N/A'}`}
+            {`Available Total Bars: ${getTotalBars(b)} | Ready: ${b.readyDate ? new Date(b.readyDate).toLocaleDateString() : 'N/A'}`}
           </option>
         ))}
       </datalist>

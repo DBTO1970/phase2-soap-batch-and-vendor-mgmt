@@ -20,32 +20,27 @@ export default async function BatchesPage({
   const params = await searchParams;
   const query = params.q || "";
   const sort = params.sort || "readyDate_desc";
+  const getTotalBars = (batch: { onHandLabeled: number | null; onHandUnlabeled: number | null }) =>
+    (batch.onHandLabeled || 0) + (batch.onHandUnlabeled || 0);
 
   // 1. Fetch filtered data from Database
-  const rawBatches = await prisma.soapBatch.findMany({
+  const fetchedBatches = await prisma.soapBatch.findMany({
     where: {
-      AND: [
-        {
-          OR: [
-            { onHandLabeled: { gte: 1 } },
-            { onHandUnlabeled: { gte: 1 } }
-          ],
-        },
-        query ? {
-          OR: [
-            { name: { contains: query, mode: "insensitive" } },
-            { fragranceOil: { contains: query, mode: "insensitive" } },
-            { recipe: { contains: query, mode: "insensitive" } },
-          ],
-        } : {},
-      ]
+      ...(query ? {
+        OR: [
+          { name: { contains: query, mode: "insensitive" } },
+          { fragranceOil: { contains: query, mode: "insensitive" } },
+          { recipe: { contains: query, mode: "insensitive" } },
+        ],
+      } : {}),
     },
   });
+  const rawBatches = fetchedBatches.filter((batch) => getTotalBars(batch) > 0);
 
   // 2. Perform Sort Logic
   const batches = [...rawBatches].sort((a, b) => {
-    const totalA = (a.onHandLabeled || 0) + (a.onHandUnlabeled || 0);
-    const totalB = (b.onHandLabeled || 0) + (b.onHandUnlabeled || 0);
+    const totalA = getTotalBars(a);
+    const totalB = getTotalBars(b);
     const dateA = new Date(a.readyDate || 0).getTime();
     const dateB = new Date(b.readyDate || 0).getTime();
     
@@ -70,7 +65,7 @@ export default async function BatchesPage({
         </div>
         <div className="text-gray-500 dark:text-gray-400 text-sm bg-green-100 dark:bg-green-800 px-3 py-1 rounded">
           Total Bars Ready: {batches.filter(b => b.readyDate && new Date(b.readyDate) <= now)
-          .reduce((sum, b) => sum + (b.onHandLabeled || 0) + (b.onHandUnlabeled || 0), 0)}
+          .reduce((sum, b) => sum + getTotalBars(b), 0)}
         </div>
         <div className="flex items-center gap-2">
           <Link 
@@ -95,16 +90,11 @@ export default async function BatchesPage({
                 </span>
               </div>
 
-              <div className="grid grid-cols-2 gap-4 mb-4">
+              <div className="mb-4">
                 <div className="bg-blue-50 p-3 rounded-lg text-center">
-                  <p className="text-2xl font-bold text-blue-700">{batch.onHandLabeled}</p>
-                  <p className="text-[10px] uppercase text-blue-500 font-semibold tracking-wide">Labeled</p>
+                  <p className="text-2xl font-bold text-blue-700">{getTotalBars(batch)}</p>
+                  <p className="text-[10px] uppercase text-blue-500 font-semibold tracking-wide">Total Bars</p>
                 </div>
-                <div className="bg-gray-50 p-3 rounded-lg text-center">
-                  <p className="text-2xl font-bold text-gray-700">{batch.onHandUnlabeled}</p>
-                  <p className="text-[10px] uppercase text-gray-400 font-semibold tracking-wide">Unlabeled</p>
-                </div>
-                <div className="col-span-2 text-sm text-gray-600">Total on hand: <span className="font-bold">{(batch.onHandLabeled || 0) + (batch.onHandUnlabeled || 0)}</span></div>
               </div>
 
               <div className="space-y-2 text-sm border-t pt-4">

@@ -32,11 +32,13 @@ export async function createClient(formData: FormData) {
 }
 
 export async function saveInvoice(clientId: string, items: any[], notes: string) {
-  const totalAmount = items.reduce((sum, item) => sum + (item.quantity * item.price), 0);
-  
+  const totalAmount = items.reduce((sum, item) => sum + ((item.quantity ?? 1) * (item.price ?? 0)), 0);
+
   const invoice = await prisma.$transaction(async (tx) => {
-    // 1. Validate and update inventory for each line item
+    // 1. Validate and update inventory for each soap line item
     for (const item of items) {
+      if (item.isShipping || !item.batchId) continue;
+
       const batch = await tx.soapBatch.findUnique({
         where: { id: item.batchId }
       });
@@ -44,11 +46,11 @@ export async function saveInvoice(clientId: string, items: any[], notes: string)
       if (!batch) throw new Error(`Soap batch ${item.batchId} not found.`);
 
       const totalAvailable = (batch.onHandLabeled ?? 0) + (batch.onHandUnlabeled ?? 0);
-      if (item.quantity > totalAvailable) {
-        throw new Error(`Insufficient stock for ${batch.name}. Available: ${totalAvailable}, Requested: ${item.quantity}`);
+      if ((item.quantity ?? 1) > totalAvailable) {
+        throw new Error(`Insufficient stock for ${batch.name}. Available: ${totalAvailable}, Requested: ${item.quantity ?? 1}`);
       }
 
-      let remainingToDeduct = item.quantity;
+      let remainingToDeduct = item.quantity ?? 1;
       let newLabeled = batch.onHandLabeled ?? 0;
       let newUnlabeled = batch.onHandUnlabeled ?? 0;
 
@@ -81,10 +83,11 @@ export async function saveInvoice(clientId: string, items: any[], notes: string)
         notes,
         status: "PENDING",
         items: {
-          create: items.map(item => ({
-            batchId: item.batchId,
-            quantity: item.quantity,
-            price: item.price,
+          create: items.map((item) => ({
+            batchId: item.isShipping ? null : item.batchId || null,
+            description: item.isShipping ? "Shipping" : item.name || "Item",
+            quantity: item.quantity ?? 1,
+            price: item.price ?? 0,
           }))
         }
       },

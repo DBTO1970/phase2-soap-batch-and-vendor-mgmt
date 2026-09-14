@@ -7,7 +7,7 @@ import { downloadInvoicePDF } from "@/lib/invoice-generator";
 
 type InvoiceWithItems = Invoice & {
   items: (InvoiceItem & {
-    batch: SoapBatch;
+    batch: SoapBatch | null;
   })[];
 };
 
@@ -17,6 +17,7 @@ interface SelectedItem {
   quantity: number;
   price: number;
   maxQty: number;
+  isShipping?: boolean;
 }
 
 export default function InvoiceActions({ client, inventory }: { client: Client; inventory: SoapBatch[] }) {
@@ -25,6 +26,15 @@ export default function InvoiceActions({ client, inventory }: { client: Client; 
   const [notes, setNotes] = useState("");
   const [items, setItems] = useState<SelectedItem[]>([]);
   const [inventoryState, setInventoryState] = useState<SoapBatch[]>(inventory);
+
+  const createShippingItem = (): SelectedItem => ({
+    batchId: "",
+    name: "Shipping",
+    quantity: 1,
+    price: 0,
+    maxQty: 0,
+    isShipping: true,
+  });
 
   const getTotalBars = (batch: SoapBatch) => (batch.onHandLabeled ?? 0) + (batch.onHandUnlabeled ?? 0);
 
@@ -88,7 +98,7 @@ export default function InvoiceActions({ client, inventory }: { client: Client; 
 
   const handleDownload = (inv: InvoiceWithItems) => {
     const lineItems = inv.items.map((i) => ({
-      description: i.batch.name + " soap",
+      description: i.batch ? `${i.batch.name} soap` : (i.description || "Shipping"),
       quantity: i.quantity,
       price: i.price
     }));
@@ -116,48 +126,82 @@ export default function InvoiceActions({ client, inventory }: { client: Client; 
                 <div className="space-y-4 text-left">
                   {items.map((item, idx) => (
                     <div key={idx} className="flex flex-wrap items-end gap-3 border-b border-gray-100 pb-3">
-                      <div className="flex-1 min-w-[200px]">
-                        <label className="text-[10px] font-bold text-gray-400 uppercase mb-1 block">Select Soap</label>
-                        <input 
-                          list={`inv-batches-${client.id}`} 
-                          className="max-w-full border rounded p-1.5 text-sm" 
-                          placeholder="Search batches..."
+                      <div className="w-full max-w-[180px]">
+                        <label className="text-[10px] font-bold text-gray-400 uppercase mb-1 block">Item Type</label>
+                        <select
+                          value={item.isShipping ? "shipping" : "soap"}
                           onChange={(e) => {
-                            const b = availableInventory.find(x => x.name === e.target.value);
-                            if (b) {
+                            const isShipping = e.target.value === "shipping";
+                            const newItems = [...items];
+                            newItems[idx] = {
+                              ...newItems[idx],
+                              isShipping,
+                              batchId: "",
+                              name: isShipping ? "Shipping" : "",
+                              quantity: isShipping ? 1 : Math.max(1, newItems[idx].quantity || 1),
+                              maxQty: 0,
+                            };
+                            setItems(newItems);
+                          }}
+                          className="w-full border rounded p-1.5 text-sm"
+                        >
+                          <option value="soap">Soap</option>
+                          <option value="shipping">Shipping</option>
+                        </select>
+                      </div>
+
+                      {item.isShipping ? (
+                        <div className="flex-1 min-w-[140px]">
+                          <label className="text-[10px] font-bold text-gray-400 uppercase mb-1 block">Shipping</label>
+                          <div className="border rounded p-1.5 text-sm bg-gray-50 text-gray-700">
+                            {item.name}
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="flex-1 min-w-[200px]">
+                          <label className="text-[10px] font-bold text-gray-400 uppercase mb-1 block">Select Soap</label>
+                          <input 
+                            list={`inv-batches-${client.id}`} 
+                            className="max-w-full border rounded p-1.5 text-sm" 
+                            placeholder="Search batches..."
+                            value={item.name}
+                            onChange={(e) => {
+                              const nextName = e.target.value;
+                              const b = availableInventory.find(x => x.name === nextName);
                               const newItems = [...items];
-                              const available = getTotalBars(b);
-                              newItems[idx] = { 
-                                ...newItems[idx], 
-                                batchId: b.id, 
-                                name: b.name, 
-                                maxQty: available,
-                                quantity: Math.min(newItems[idx].quantity, available)
+                              newItems[idx] = {
+                                ...newItems[idx],
+                                name: nextName,
+                                batchId: b ? b.id : "",
+                                maxQty: b ? getTotalBars(b) : 0,
+                                quantity: b ? Math.min(newItems[idx].quantity || 1, getTotalBars(b)) : Math.max(1, newItems[idx].quantity || 1),
                               };
                               setItems(newItems);
-                            }
-                          }}
-                        />
-                      </div>
-                      <div className="w-fit min-w-[80px]">
-                        <label className="text-[10px] font-bold text-gray-400 uppercase mb-1 block">Qty</label>
-                        <input 
-                          type="number" 
-                          min="0" 
-                          max={item.maxQty} 
-                          value={item.quantity} 
-                          className="w-full border rounded p-1.5 text-sm" 
-                          onChange={(e) => {
-                          const newItems = [...items];
-                          newItems[idx].quantity = parseInt(e.target.value) || 0;
-                          const val = parseInt(e.target.value) || 0;
-                          // Enforce bounds: 0 <= quantity <= maxQty
-                          newItems[idx].quantity = Math.max(0, Math.min(val, item.maxQty));
-                          setItems(newItems);
-                        }} />
-                      </div>
+                            }}
+                          />
+                        </div>
+                      )}
+
+                      {!item.isShipping && (
+                        <div className="w-fit min-w-[80px]">
+                          <label className="text-[10px] font-bold text-gray-400 uppercase mb-1 block">Qty</label>
+                          <input 
+                            type="number" 
+                            min="0" 
+                            max={item.maxQty} 
+                            value={item.quantity} 
+                            className="w-full border rounded p-1.5 text-sm" 
+                            onChange={(e) => {
+                              const newItems = [...items];
+                              const val = parseInt(e.target.value) || 0;
+                              newItems[idx].quantity = Math.max(0, Math.min(val, item.maxQty));
+                              setItems(newItems);
+                            }} />
+                        </div>
+                      )}
+
                       <div className="w-fit min-w-[100px]">
-                        <label className="text-[10px] font-bold text-gray-400 uppercase mb-1 block">Price/Bar</label>
+                        <label className="text-[10px] font-bold text-gray-400 uppercase mb-1 block">{item.isShipping ? "Amount" : "Price/Bar"}</label>
                         <input type="number" step="0.01" value={item.price} className="w-full border rounded p-1.5 text-sm" onChange={(e) => {
                           const newItems = [...items];
                           newItems[idx].price = parseFloat(e.target.value) || 0;
@@ -167,7 +211,11 @@ export default function InvoiceActions({ client, inventory }: { client: Client; 
                       <button onClick={() => setItems(items.filter((_, i) => i !== idx))} className="text-red-400 p-1.5 hover:text-red-600">✕</button>
                     </div>
                   ))}
-                  <button onClick={() => setItems([...items, { batchId: '', name: '', quantity: 1, price: 0, maxQty: 0 }])} className="text-indigo-600 text-sm font-bold hover:underline">+ Add Line Item</button>
+
+                  <div className="flex gap-4">
+                    <button onClick={() => setItems([...items, { batchId: '', name: '', quantity: 1, price: 0, maxQty: 0 }])} className="text-indigo-600 text-sm font-bold hover:underline">+ Add Line Item</button>
+                    <button onClick={() => setItems([...items, createShippingItem()])} className="text-amber-600 text-sm font-bold hover:underline">+ Add Shipping</button>
+                  </div>
                   
                   <div className="pt-4 p-2">
                     <label className="text-sm font-bold text-gray-700 px-2">Invoice Notes</label>
@@ -195,11 +243,15 @@ export default function InvoiceActions({ client, inventory }: { client: Client; 
                           </div>
                           <p className="text-xs text-gray-400 mt-1">{new Date(inv.createdAt).toLocaleDateString()}</p>
                           <div>
-                            {inv.items.map((item) => (
-                              <div key={item.id} className="text-sm text-gray-700">
-                                {item.batch.name} - {item.quantity} @ ${item.price.toFixed(2)} each
-                              </div>
-                            ))}
+                            {inv.items.map((item) => {
+                              const description = item.batch ? `${item.batch.name} soap` : (item.description || "Shipping");
+
+                              return (
+                                <div key={item.id} className="text-sm text-gray-700">
+                                  {description} - {item.quantity} @ ${item.price.toFixed(2)} each
+                                </div>
+                              );
+                            })}
                           </div>
                         </div>
                         <div className="flex gap-4">

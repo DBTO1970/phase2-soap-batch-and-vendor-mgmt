@@ -110,12 +110,13 @@ model Invoice {
 }
 
 model InvoiceItem {
-  id        String    @id @default(cuid())
-  invoiceId String
-  invoice   Invoice   @relation(fields: [invoiceId], references: [id])
-  batchId   String
-  batch     SoapBatch @relation(fields: [batchId], references: [id])
-  quantity  Int
-  price     Float     // Price per unit
-  createdAt DateTime  @default(now())
+  id          String    @id @default(cuid())
+  invoiceId   String
+  invoice     Invoice   @relation(fields: [invoiceId], references: [id])
+  batchId     String?
+  batch       SoapBatch? @relation(fields: [batchId], references: [id])
+  description String?
+  quantity    Int
+  price       Float     // Price per unit
+  createdAt   DateTime  @default(now())
 }

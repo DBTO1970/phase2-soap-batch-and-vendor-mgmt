@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { SoapBatch, Client, Invoice, InvoiceItem } from "@prisma/client";
 import { saveInvoice, getInvoicesForClient, updateInvoiceStatus, deleteInvoice } from "@/lib/actions";
 import { downloadInvoicePDF } from "@/lib/invoice-generator";
@@ -24,11 +24,28 @@ export default function InvoiceActions({ client, inventory }: { client: Client; 
   const [invoices, setInvoices] = useState<InvoiceWithItems[]>([]);
   const [notes, setNotes] = useState("");
   const [items, setItems] = useState<SelectedItem[]>([]);
+  const [inventoryState, setInventoryState] = useState<SoapBatch[]>(inventory);
+
   const getTotalBars = (batch: SoapBatch) => (batch.onHandLabeled ?? 0) + (batch.onHandUnlabeled ?? 0);
+
+  useEffect(() => {
+    setInventoryState(inventory);
+  }, [inventory]);
+
+  const refreshInventory = async () => {
+    try {
+      const res = await fetch("/api/batches");
+      if (!res.ok) throw new Error("Failed to refresh inventory");
+      const data = await res.json();
+      setInventoryState(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error("Failed to refresh inventory", error);
+    }
+  };
 
   const now = new Date();
   // Filter and sort inventory: Only items with stock AND ready today or before
-  const availableInventory = inventory
+  const availableInventory = inventoryState
     .filter((b) => {
       const hasStock = getTotalBars(b) > 0;
       const isReady = b.readyDate && new Date(b.readyDate) <= now;
@@ -46,6 +63,11 @@ export default function InvoiceActions({ client, inventory }: { client: Client; 
     setView('list');
   };
 
+  const openCreateView = async () => {
+    await refreshInventory();
+    setView('create');
+  };
+
   const handleSave = async () => {
     if (items.length === 0) return alert("Add items first");
     try {
@@ -53,12 +75,14 @@ export default function InvoiceActions({ client, inventory }: { client: Client; 
       // Trigger the automatic PDF download using the returned invoice data
       handleDownload(newInvoice as InvoiceWithItems);
 
+      await refreshInventory();
       setItems([]);
       setNotes("");
       setView('none');
       alert("Invoice saved and inventory updated.");
-    } catch (error: any) {
-      alert(error.message || "Failed to save invoice");
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : "Failed to save invoice";
+      alert(message);
     }
   };
 
@@ -73,9 +97,9 @@ export default function InvoiceActions({ client, inventory }: { client: Client; 
 
   return (
     <div className="flex gap-2 justify-end">
-      <button onClick={() => setView('create')} className="text-indigo-600 hover:text-indigo-800 text-xs font-bold uppercase tracking-wider">Create</button>
+      <button onClick={openCreateView} className="text-indigo-600 hover:text-indigo-800 text-xs font-bold uppercase tracking-wider">Create</button>
       <span className="text-gray-300">|</span>
-      <button onClick={loadInvoices} className="text-gray-600 hover:text-gray-800 text-xs font-bold uppercase tracking-wider">History</button>
+      <button onClick={async () => { await refreshInventory(); loadInvoices(); }} className="text-gray-600 hover:text-gray-800 text-xs font-bold uppercase tracking-wider">History</button>
 
       {view !== 'none' && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-start justify-center p-4 overflow-y-auto">

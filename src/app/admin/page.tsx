@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import type { SoapBatch } from '@prisma/client';
 
 type BatchEntry = {
   name: string;
@@ -19,9 +20,11 @@ type BatchEntry = {
 };
 
 export default function AdminBatches() {
-  const [batches, setBatches] = useState<any[]>([]);
+  const [batches, setBatches] = useState<SoapBatch[]>([]);
   const [newEntries, setNewEntries] = useState<BatchEntry[]>([emptyEntry()]);
   const [loading, setLoading] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'ready' | 'comingSoon' | 'lowStock'>('all');
 
   function emptyEntry(): BatchEntry {
     return {
@@ -44,6 +47,37 @@ export default function AdminBatches() {
     setBatches(data);
   };
 
+  const getTotalBars = (batch: Pick<SoapBatch, 'onHandLabeled' | 'onHandUnlabeled'>) =>
+    (batch.onHandLabeled || 0) + (batch.onHandUnlabeled || 0);
+
+  const filteredBatches = batches.filter((batch) => {
+    const query = searchTerm.trim().toLowerCase();
+    const matchesSearch = !query || [
+      batch.name,
+      batch.recipe,
+      batch.notes,
+      batch.additionalIngredients,
+      batch.sheetId,
+    ].some((value) => String(value || '').toLowerCase().includes(query));
+
+    if (!matchesSearch) return false;
+
+    const totalBars = getTotalBars(batch);
+    const readyDate = batch.readyDate ? new Date(batch.readyDate) : null;
+    const isReady = readyDate ? readyDate <= new Date() : false;
+
+    switch (statusFilter) {
+      case 'ready':
+        return totalBars > 0 && isReady;
+      case 'comingSoon':
+        return totalBars > 0 && !isReady;
+      case 'lowStock':
+        return totalBars < 2;
+      default:
+        return true;
+    }
+  });
+
   const handleAddRow = () => setNewEntries([...newEntries, emptyEntry()]);
 
   const handleRemoveRow = (index: number) => {
@@ -51,7 +85,7 @@ export default function AdminBatches() {
     setNewEntries(newEntries.filter((_, i) => i !== index));
   };
 
-  const handleInputChange = (index: number, field: keyof BatchEntry, value: any) => {
+  const handleInputChange = (index: number, field: keyof BatchEntry, value: BatchEntry[keyof BatchEntry]) => {
     const updated = [...newEntries];
     const newEntry = { ...updated[index], [field]: value };
 
@@ -94,13 +128,12 @@ export default function AdminBatches() {
 
       if (res.ok) {
         setNewEntries([emptyEntry()]);
-        fetchBatches();
+        await fetchBatches();
       } else {
         const err = await res.json();
         alert(`Error saving batches: ${err.error || 'Unknown error'}`);
       }
-    } catch (err) {
-      console.error(err);
+    } catch {
       alert('A network error occurred while saving.');
     } finally {
       setLoading(false);
@@ -116,8 +149,8 @@ export default function AdminBatches() {
         body: JSON.stringify({ onHandLabeled: safeValue, onHandUnlabeled: 0 }),
       });
       if (!res.ok) throw new Error('Failed to update');
-      fetchBatches();
-    } catch (err) {
+      await fetchBatches();
+    } catch {
       alert('Failed to update quantity. Please check your connection.');
     }
   };
@@ -127,8 +160,8 @@ export default function AdminBatches() {
     try {
       const res = await fetch(`/api/batches/${id}`, { method: 'DELETE' });
       if (!res.ok) throw new Error('Failed to delete');
-      fetchBatches();
-    } catch (err) {
+      await fetchBatches();
+    } catch {
       alert('Failed to delete batch.');
     }
   };
@@ -285,7 +318,30 @@ export default function AdminBatches() {
 
       {/* INVENTORY TABLE */}
       <section className="bg-white rounded-lg shadow border border-slate-200 overflow-hidden">
-        <h2 className="text-xl font-semibold p-6 border-b">Batch Inventory</h2>
+        <div className="p-6 border-b">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+            <h2 className="text-xl font-semibold">Batch Inventory</h2>
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+              <input
+                type="text"
+                placeholder="Search batches..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="border rounded px-3 py-2 text-sm min-w-[220px]"
+              />
+              <select
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value as 'all' | 'ready' | 'comingSoon' | 'lowStock')}
+                className="border rounded px-3 py-2 text-sm"
+              >
+                <option value="all">All Batches</option>
+                <option value="ready">Ready Now</option>
+                <option value="comingSoon">Coming Soon</option>
+                <option value="lowStock">Low Stock</option>
+              </select>
+            </div>
+          </div>
+        </div>
         <table className="w-full text-left">
           <thead className="bg-slate-50 text-slate-500 uppercase text-xs font-bold">
             <tr>
@@ -297,7 +353,7 @@ export default function AdminBatches() {
             </tr>
           </thead>
           <tbody className="divide-y">
-            {batches.map((b) => (
+            {filteredBatches.map((b) => (
               <tr key={b.id} className="hover:bg-slate-50 transition-colors">
                 <td className="px-2 py-4">
                   <div className="font-medium">{b.name}</div>
@@ -331,6 +387,9 @@ export default function AdminBatches() {
             ))}
           </tbody>
         </table>
+        {filteredBatches.length === 0 && (
+          <div className="px-6 py-10 text-center text-slate-500">No batches match the current search or filter.</div>
+        )}
       </section>
     </div>
   );

@@ -58,8 +58,8 @@ export default function InvoiceActions({ client, inventory }: { client: Client; 
   const availableInventory = inventoryState
     .filter((b) => {
       const hasStock = getTotalBars(b) > 0;
-      const isReady = b.readyDate && new Date(b.readyDate) <= now;
-      return hasStock && isReady;
+      // const isReady = b.readyDate && new Date(b.readyDate) <= now;
+      return hasStock;
     })
     .sort((a, b) => {
       const dateA = a.readyDate ? new Date(a.readyDate).getTime() : 0;

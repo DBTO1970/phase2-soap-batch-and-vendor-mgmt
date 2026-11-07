@@ -10,6 +10,7 @@ export interface BatchLabelBatch {
   barCount?: number;
   onHandLabeled?: number | null;
   onHandUnlabeled?: number | null;
+  useBackground?: boolean;
 }
 
 interface BatchLabelSelectorProps<TBatch extends BatchLabelBatch> {
@@ -44,6 +45,9 @@ export default function BatchLabelSelector<TBatch extends BatchLabelBatch>({
           : [];
       }),
     ),
+  );
+  const [backgrounds, setBackgrounds] = useState<Record<string, boolean>>(() =>
+    Object.fromEntries(batches.map((batch) => [String(batch.id), true])),
   );
   const selectedCount = batches.filter((batch) => quantities[String(batch.id)] !== undefined).length;
   const allSelected = batches.length > 0 && selectedCount === batches.length;
@@ -107,6 +111,10 @@ export default function BatchLabelSelector<TBatch extends BatchLabelBatch>({
     setIngredients((current) => ({ ...current, [id]: value }));
   };
 
+  const updateBackground = (id: string, checked: boolean) => {
+    setBackgrounds((current) => ({ ...current, [id]: checked }));
+  };
+
   const generateLabels = () => {
     onGenerate(
       batches.flatMap((batch) => {
@@ -122,6 +130,7 @@ export default function BatchLabelSelector<TBatch extends BatchLabelBatch>({
             Ingredients: ingredients[id] ?? "",
             quantity,
             NetWeight: weight,
+            useBackground: backgrounds[id] ?? true,
           }];
       }),
     );
@@ -154,6 +163,7 @@ export default function BatchLabelSelector<TBatch extends BatchLabelBatch>({
               <th scope="col" className="min-w-80 px-3 py-3">Ingredients</th>
               <th scope="col" className="w-36 px-3 py-3">Bar weight (oz)</th>
               <th scope="col" className="w-36 px-3 py-3">Label quantity</th>
+              <th scope="col" className="w-32 px-3 py-3">Background</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
@@ -165,6 +175,7 @@ export default function BatchLabelSelector<TBatch extends BatchLabelBatch>({
               const ingredientsId = `batch-label-ingredients-${id}`;
               const quantityId = `batch-label-quantity-${id}`;
               const weightId = `batch-label-weight-${id}`;
+              const backgroundId = `batch-label-background-${id}`;
 
               return (
                 <tr key={id} className={isSelected ? "bg-blue-50/60 dark:bg-blue-950/30" : ""}>
@@ -233,12 +244,24 @@ export default function BatchLabelSelector<TBatch extends BatchLabelBatch>({
                       className="w-24 rounded-md border border-gray-300 px-2 py-1.5 text-gray-900 disabled:bg-gray-100 disabled:text-gray-400 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 dark:disabled:bg-gray-900"
                     />
                   </td>
+                  <td className="px-3 py-3">
+                    <label className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300" htmlFor={backgroundId}>
+                      <input
+                        id={backgroundId}
+                        type="checkbox"
+                        checked={backgrounds[id] ?? true}
+                        onChange={(event) => updateBackground(id, event.currentTarget.checked)}
+                        className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                      />
+                      Use Background
+                    </label>
+                  </td>
                 </tr>
               );
             })}
             {batches.length === 0 && (
               <tr>
-                <td colSpan={6} className="px-3 py-8 text-center text-gray-500 dark:text-gray-400">
+                <td colSpan={7} className="px-3 py-8 text-center text-gray-500 dark:text-gray-400">
                   No batches available.
                 </td>
               </tr>

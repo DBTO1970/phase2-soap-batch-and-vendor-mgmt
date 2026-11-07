@@ -45,6 +45,7 @@ model SoapBatch {
   additionalIngredients String?  @default("None")
   fragranceOil          String?  @default("None")
   fragranceAmountOz     Float?   @default(0)
+  fragranceDetails      Json?
   colorDesign           String?  @default("Plain")
   oilTemp               Float?   @default(0)
   lyeTemp               Float?   @default(0)

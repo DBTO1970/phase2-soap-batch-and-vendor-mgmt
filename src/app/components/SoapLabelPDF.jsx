@@ -2,6 +2,7 @@
 
 import {
   Document,
+  Font,
   Image,
   Page,
   PDFDownloadLink,
@@ -13,7 +14,18 @@ import {
   Circle,
 } from "@react-pdf/renderer";
 
-const BRAND_COLOR = "#550000";
+const BRAND_COLOR = "#910619";
+const NAME_COLOR = "#910619";
+const INK_BLACK = "#000000";
+
+Font.register({
+  family: "EB Garamond",
+  fonts: [
+    { src: "/fonts/eb-garamond-regular.woff", fontWeight: 400 },
+    { src: "/fonts/eb-garamond-italic.woff", fontWeight: 400, fontStyle: "italic" },
+    { src: "/fonts/eb-garamond-bold.woff", fontWeight: 700 },
+  ],
+});
 
 const styles = StyleSheet.create({
   page: {
@@ -35,6 +47,15 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     borderWidth: 0.75,
     borderColor: BRAND_COLOR,
+    position: "relative",
+  },
+  labelBackground: {
+    position: "absolute",
+    top: 0.75,
+    left: 0.75,
+    width: 610.5,
+    height: 106.5,
+    objectFit: "cover",
   },
   panel: {
     height: "100%",
@@ -70,11 +91,12 @@ const styles = StyleSheet.create({
     width: 108,
   },
   handcrafted: {
+    fontFamily: "EB Garamond",
     marginBottom: 5,
     fontSize: 9,
     fontStyle: "italic",
     textAlign: "center",
-    color: BRAND_COLOR,
+    color: NAME_COLOR,
   },
   ingredientsText: {
     fontSize: 8,
@@ -82,31 +104,34 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   ingredientsWeight: {
+    fontFamily: "EB Garamond",
     marginTop: 6,
     fontSize: 9,
     textAlign: "center",
-    color: BRAND_COLOR,
+    color: NAME_COLOR,
   },
   productName: {
+    fontFamily: "EB Garamond",
     fontSize: 15,
     fontWeight: 700,
+    marginTop: 2,
     marginBottom: 5,
-    color: BRAND_COLOR,
+    color: NAME_COLOR,
   },
   brandDivider: {
-    marginBottom: 3,
+    marginBottom: -7,
     position: "relative",
     width: 164,
-    height: 16,
+    height: 26,
   },
   brandDots: {
     position: "absolute",
-    top: 0,
+    top: 5,
     left: 0,
   },
   beanImage: {
     position: "absolute",
-    top: 0,
+    top: 5,
     left: 73,
     width: 18,
     height: 16,
@@ -126,7 +151,7 @@ function BrandingSeparator() {
     <View style={styles.brandDivider}>
       <Svg width={164} height={14} viewBox="0 0 164 14" style={styles.brandDots}>
         {[...leftDots, ...rightDots].map((x) => (
-          <Circle key={x} cx={x} cy={7} r={2} fill={BRAND_COLOR} />
+          <Circle key={x} cx={x} cy={7} r={2} fill={INK_BLACK} />
         ))}
       </Svg>
       <Image
@@ -176,11 +201,11 @@ function CurvedBranding() {
                 key={`${text}-${index}-${offsetX}`}
                 x={glyphX}
                 y={y}
-                fill={BRAND_COLOR}
-                fontFamily="Helvetica-Bold"
+                fill={INK_BLACK}
+                fontFamily="EB Garamond"
                 fontSize={fontSize}
                 fontWeight="bold"
-                stroke={BRAND_COLOR}
+                stroke={INK_BLACK}
                 strokeWidth={0.6}
                 textAnchor="middle"
                 transform={`rotate(${angle} ${glyphX} ${y})`}
@@ -206,6 +231,7 @@ function CurvedBranding() {
  * @property {string} [ingredients]
  * @property {string | number} [NetWeight]
  * @property {string | number} [netWeight]
+ * @property {boolean} [useBackground]
  */
 
 /**
@@ -222,6 +248,13 @@ function SoapLabelPDF({ items = [] }) {
               style={styles.band}
               wrap={false}
             >
+              {item.useBackground !== false && (
+                <Image
+                  src="/plant_motif_bg.png"
+                  alt=""
+                  style={styles.labelBackground}
+                />
+              )}
               <View style={[styles.panel, styles.ingredients]}>
                 <Text style={styles.handcrafted}>— Handcrafted with —</Text>
                 <Text style={styles.ingredientsText}>

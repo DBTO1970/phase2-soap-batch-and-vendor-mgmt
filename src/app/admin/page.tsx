@@ -9,8 +9,7 @@ type BatchEntry = {
   totalBars: string | number;
   madeDate: string;
   readyDate: string;
-  fragranceOils: string[];
-  fragranceAmountOz: string | number;
+  fragranceOils: Array<{ name: string; amountOz: string }>;
   notes: string;
   additionalIngredients: string;
   sheetId: string;
@@ -29,8 +28,8 @@ export default function AdminBatches() {
   function emptyEntry(): BatchEntry {
     return {
       name: '', recipe: '', totalBars: 0,
-      madeDate: '', readyDate: '', fragranceOils: [''],
-      fragranceAmountOz: 0, notes: '',
+      madeDate: '', readyDate: '', fragranceOils: [{ name: '', amountOz: '' }],
+      notes: '',
       additionalIngredients: BASE_ADDITIONAL_INGREDIENTS,
       sheetId: ''
     };
@@ -79,11 +78,16 @@ export default function AdminBatches() {
 
   const handleAddRow = () => setNewEntries([...newEntries, emptyEntry()]);
 
-  const handleFragranceOilChange = (entryIndex: number, oilIndex: number, value: string) => {
+  const handleFragranceOilChange = (
+    entryIndex: number,
+    oilIndex: number,
+    field: 'name' | 'amountOz',
+    value: string,
+  ) => {
     setNewEntries((entries) => entries.map((entry, index) => {
       if (index !== entryIndex) return entry;
       const fragranceOils = [...entry.fragranceOils];
-      fragranceOils[oilIndex] = value;
+      fragranceOils[oilIndex] = { ...fragranceOils[oilIndex], [field]: value };
       return { ...entry, fragranceOils };
     }));
   };
@@ -91,7 +95,7 @@ export default function AdminBatches() {
   const handleAddFragranceOil = (entryIndex: number) => {
     setNewEntries((entries) => entries.map((entry, index) =>
       index === entryIndex
-        ? { ...entry, fragranceOils: [...entry.fragranceOils, ''] }
+        ? { ...entry, fragranceOils: [...entry.fragranceOils, { name: '', amountOz: '' }] }
         : entry,
     ));
   };
@@ -131,13 +135,17 @@ export default function AdminBatches() {
     // Prepare entries: auto-generate sheetId and ensure correct data types for Prisma
     const entriesToSave = newEntries.map((entry) => {
       const { totalBars, fragranceOils, ...entryData } = entry;
+      const fragranceDetails = fragranceOils
+        .map((oil) => ({ name: oil.name.trim(), amountOz: Number(oil.amountOz) || 0 }))
+        .filter((oil) => oil.name);
       return {
         ...entryData,
-        fragranceOil: fragranceOils.map((oil) => oil.trim()).filter(Boolean).join(', '),
+        fragranceOil: fragranceDetails.map((oil) => oil.name).join(', '),
+        fragranceDetails,
         sheetId: `BATCH-${Math.random().toString(36).substring(2, 9).toUpperCase()}`,
         onHandLabeled: Number(totalBars) || 0,
         onHandUnlabeled: 0,
-        fragranceAmountOz: Number(entry.fragranceAmountOz) || 0,
+        fragranceAmountOz: fragranceDetails.reduce((total, oil) => total + oil.amountOz, 0),
       };
     });
 
@@ -258,9 +266,20 @@ export default function AdminBatches() {
                   <div key={oilIdx} className="flex items-center gap-2">
                     <input
                       className="min-w-0 flex-1 border p-2 rounded"
-                      value={oil}
-                      onChange={(e) => handleFragranceOilChange(idx, oilIdx, e.target.value)}
+                      value={oil.name}
+                      placeholder="Fragrance oil"
+                      onChange={(e) => handleFragranceOilChange(idx, oilIdx, 'name', e.target.value)}
                       aria-label={`Fragrance oil ${oilIdx + 1}`}
+                    />
+                    <input
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      className="w-28 border p-2 rounded"
+                      value={oil.amountOz}
+                      placeholder="Amount (oz)"
+                      onChange={(e) => handleFragranceOilChange(idx, oilIdx, 'amountOz', e.target.value)}
+                      aria-label={`Fragrance oil ${oilIdx + 1} amount in ounces`}
                     />
                     {entry.fragranceOils.length > 1 && (
                       <button
@@ -283,16 +302,6 @@ export default function AdminBatches() {
                 >
                   +
                 </button>
-              </div>
-              <div className="flex flex-col">
-                <label className="text-xs font-bold text-slate-500 uppercase">Fragrance Amount (oz)</label>
-                <input
-                  type="number"
-                  step="0.01"
-                  className="border p-2 rounded"
-                  value={entry.fragranceAmountOz}
-                  onChange={(e) => handleInputChange(idx, 'fragranceAmountOz', e.target.value)}
-                />
               </div>
               <div className="flex flex-col md:col-span-4">
                 <label className="text-xs font-bold text-slate-500 uppercase">ADDITIONAL INGREDIENTS</label>

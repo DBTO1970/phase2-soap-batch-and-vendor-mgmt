@@ -61,7 +61,8 @@ const styles = StyleSheet.create({
     left: 0,
     width: 612,
     height: 108,
-    borderWidth: 0.75,
+    borderTopWidth: 0.75,
+    borderBottomWidth: 0.75,
     borderColor: BRAND_COLOR,
   },
   panel: {

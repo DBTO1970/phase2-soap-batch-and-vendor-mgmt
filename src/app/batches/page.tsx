@@ -68,6 +68,12 @@ export default async function BatchesPage({
           .reduce((sum, b) => sum + getTotalBars(b), 0)}
         </div>
         <div className="flex items-center gap-2">
+          <Link
+            href="/labels/print"
+            className="rounded border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-800"
+          >
+            Print Labels
+          </Link>
           <Link 
             href="/admin" 
             className="bg-blue-600 text-white px-4 py-2 rounded text-sm font-medium hover:bg-blue-700 transition"

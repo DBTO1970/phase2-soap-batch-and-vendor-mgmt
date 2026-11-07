@@ -9,15 +9,15 @@ type BatchEntry = {
   totalBars: string | number;
   madeDate: string;
   readyDate: string;
-  waterOz: string | number;
-  fragranceOil: string;
+  fragranceOils: string[];
   fragranceAmountOz: string | number;
   notes: string;
   additionalIngredients: string;
-  oilTemp: string | number;
-  lyeTemp: string | number;
   sheetId: string;
 };
+
+const BASE_ADDITIONAL_INGREDIENTS =
+  'Olive Oil, Coconut Oil, Castor Oil, Avacado Oil, Shea Butter, Cocoa Butter,';
 
 export default function AdminBatches() {
   const [batches, setBatches] = useState<SoapBatch[]>([]);
@@ -29,10 +29,9 @@ export default function AdminBatches() {
   function emptyEntry(): BatchEntry {
     return {
       name: '', recipe: '', totalBars: 0,
-      madeDate: '', readyDate: '', waterOz: 0, fragranceOil: '',
-      fragranceAmountOz: 0, notes: '', additionalIngredients: '',
-      oilTemp: 0,
-      lyeTemp: 0,
+      madeDate: '', readyDate: '', fragranceOils: [''],
+      fragranceAmountOz: 0, notes: '',
+      additionalIngredients: BASE_ADDITIONAL_INGREDIENTS,
       sheetId: ''
     };
   }
@@ -80,6 +79,31 @@ export default function AdminBatches() {
 
   const handleAddRow = () => setNewEntries([...newEntries, emptyEntry()]);
 
+  const handleFragranceOilChange = (entryIndex: number, oilIndex: number, value: string) => {
+    setNewEntries((entries) => entries.map((entry, index) => {
+      if (index !== entryIndex) return entry;
+      const fragranceOils = [...entry.fragranceOils];
+      fragranceOils[oilIndex] = value;
+      return { ...entry, fragranceOils };
+    }));
+  };
+
+  const handleAddFragranceOil = (entryIndex: number) => {
+    setNewEntries((entries) => entries.map((entry, index) =>
+      index === entryIndex
+        ? { ...entry, fragranceOils: [...entry.fragranceOils, ''] }
+        : entry,
+    ));
+  };
+
+  const handleRemoveFragranceOil = (entryIndex: number, oilIndex: number) => {
+    setNewEntries((entries) => entries.map((entry, index) =>
+      index === entryIndex
+        ? { ...entry, fragranceOils: entry.fragranceOils.filter((_, i) => i !== oilIndex) }
+        : entry,
+    ));
+  };
+
   const handleRemoveRow = (index: number) => {
     if (newEntries.length === 1) return;
     setNewEntries(newEntries.filter((_, i) => i !== index));
@@ -106,16 +130,14 @@ export default function AdminBatches() {
     
     // Prepare entries: auto-generate sheetId and ensure correct data types for Prisma
     const entriesToSave = newEntries.map((entry) => {
-      const { totalBars, ...entryData } = entry;
+      const { totalBars, fragranceOils, ...entryData } = entry;
       return {
         ...entryData,
+        fragranceOil: fragranceOils.map((oil) => oil.trim()).filter(Boolean).join(', '),
         sheetId: `BATCH-${Math.random().toString(36).substring(2, 9).toUpperCase()}`,
         onHandLabeled: Number(totalBars) || 0,
         onHandUnlabeled: 0,
-        waterOz: Number(entry.waterOz) || 0,
         fragranceAmountOz: Number(entry.fragranceAmountOz) || 0,
-        oilTemp: Number(entry.oilTemp) || 0,
-        lyeTemp: Number(entry.lyeTemp) || 0,
       };
     });
 
@@ -230,23 +252,37 @@ export default function AdminBatches() {
                   onChange={(e) => handleInputChange(idx, 'totalBars', e.target.value)}
                 />
               </div>
-              <div className="flex flex-col">
-                <label className="text-xs font-bold text-slate-500 uppercase">Water (oz)</label>
-                <input
-                  type="number"
-                  step="0.01"
-                  className="border p-2 rounded"
-                  value={entry.waterOz}
-                  onChange={(e) => handleInputChange(idx, 'waterOz', e.target.value)}
-                />
-              </div>
-              <div className="flex flex-col">
-                <label className="text-xs font-bold text-slate-500 uppercase">Fragrance Oil</label>
-                <input
-                  className="border p-2 rounded"
-                  value={entry.fragranceOil}
-                  onChange={(e) => handleInputChange(idx, 'fragranceOil', e.target.value)}
-                />
+              <div className="flex flex-col gap-2">
+                <label className="text-xs font-bold text-slate-500 uppercase">Fragrance Oils</label>
+                {entry.fragranceOils.map((oil, oilIdx) => (
+                  <div key={oilIdx} className="flex items-center gap-2">
+                    <input
+                      className="min-w-0 flex-1 border p-2 rounded"
+                      value={oil}
+                      onChange={(e) => handleFragranceOilChange(idx, oilIdx, e.target.value)}
+                      aria-label={`Fragrance oil ${oilIdx + 1}`}
+                    />
+                    {entry.fragranceOils.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveFragranceOil(idx, oilIdx)}
+                        className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-slate-300 text-sm text-slate-600 hover:bg-slate-100"
+                        aria-label={`Remove fragrance oil ${oilIdx + 1}`}
+                      >
+                        −
+                      </button>
+                    )}
+                  </div>
+                ))}
+                <button
+                  type="button"
+                  onClick={() => handleAddFragranceOil(idx)}
+                  className="flex h-7 w-7 items-center justify-center rounded-full border border-slate-300 text-sm font-semibold text-slate-600 hover:bg-slate-100"
+                  aria-label="Add fragrance oil"
+                  title="Add fragrance oil"
+                >
+                  +
+                </button>
               </div>
               <div className="flex flex-col">
                 <label className="text-xs font-bold text-slate-500 uppercase">Fragrance Amount (oz)</label>
@@ -256,24 +292,6 @@ export default function AdminBatches() {
                   className="border p-2 rounded"
                   value={entry.fragranceAmountOz}
                   onChange={(e) => handleInputChange(idx, 'fragranceAmountOz', e.target.value)}
-                />
-              </div>
-              <div className="flex flex-col">
-                <label className="text-xs font-bold text-slate-500 uppercase">Oil Temp (°F)</label>
-                <input
-                  type="number"
-                  className="border p-2 rounded"
-                  value={entry.oilTemp}
-                  onChange={(e) => handleInputChange(idx, 'oilTemp', e.target.value)}
-                />
-              </div>
-              <div className="flex flex-col">
-                <label className="text-xs font-bold text-slate-500 uppercase">Lye Temp (°F)</label>
-                <input
-                  type="number"
-                  className="border p-2 rounded"
-                  value={entry.lyeTemp}
-                  onChange={(e) => handleInputChange(idx, 'lyeTemp', e.target.value)}
                 />
               </div>
               <div className="flex flex-col md:col-span-4">

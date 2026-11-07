@@ -99,6 +99,8 @@ const styles = StyleSheet.create({
     color: NAME_COLOR,
   },
   ingredientsText: {
+    marginHorizontal: 10,
+    paddingHorizontal: 5,
     fontSize: 8,
     lineHeight: 1.35,
     textAlign: "center",
@@ -114,24 +116,24 @@ const styles = StyleSheet.create({
     fontFamily: "EB Garamond",
     fontSize: 15,
     fontWeight: 700,
-    marginTop: 2,
+    marginTop: 4,
     marginBottom: 5,
     color: NAME_COLOR,
   },
   brandDivider: {
-    marginBottom: -7,
+    marginBottom: -11,
     position: "relative",
     width: 164,
     height: 26,
   },
   brandDots: {
     position: "absolute",
-    top: 5,
+    top: 1,
     left: 0,
   },
   beanImage: {
     position: "absolute",
-    top: 5,
+    top: 1,
     left: 73,
     width: 18,
     height: 16,
@@ -166,9 +168,9 @@ function BrandingSeparator() {
 function CurvedBranding() {
   const lines = [
     { text: "Morning Rituals", centerY: 22 },
-    { text: "Coffee Soap", centerY: 36 },
+    { text: "Coffee Soap", centerY: 41 },
   ];
-  const fontSize = 14;
+  const fontSize = 18;
   const letterSpacing = 0.2;
   const glyphWidth = (character) => {
     if (character === " ") return 0.3;
@@ -180,7 +182,7 @@ function CurvedBranding() {
   };
 
   return (
-    <Svg width={164} height={51} viewBox="0 0 164 51">
+    <Svg width={164} height={56} viewBox="0 0 164 56">
       {lines.flatMap(({ text, centerY }) => {
         const characters = Array.from(text);
         const advances = characters.map((character) => glyphWidth(character) * fontSize + letterSpacing);
@@ -257,7 +259,10 @@ function SoapLabelPDF({ items = [] }) {
               )}
               <View style={[styles.panel, styles.ingredients]}>
                 <Text style={styles.handcrafted}>— Handcrafted with —</Text>
-                <Text style={styles.ingredientsText}>
+                <Text
+                  style={styles.ingredientsText}
+                  hyphenationCallback={(word) => [word]}
+                >
                   {item.Ingredients ?? item.ingredients ?? "Ingredients not provided"}
                 </Text>
                 <Text style={styles.ingredientsWeight}>

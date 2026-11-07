@@ -2,12 +2,18 @@
 
 import {
   Document,
+  Image,
   Page,
   PDFDownloadLink,
   StyleSheet,
   Text,
   View,
+  Svg,
+  Text as SvgText,
+  Circle,
 } from "@react-pdf/renderer";
+
+const BRAND_COLOR = "#550000";
 
 const styles = StyleSheet.create({
   page: {
@@ -28,7 +34,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     marginBottom: 12,
     borderWidth: 0.75,
-    borderColor: "#555555",
+    borderColor: BRAND_COLOR,
   },
   panel: {
     height: "100%",
@@ -37,61 +43,157 @@ const styles = StyleSheet.create({
   },
   ingredients: {
     width: 180,
-    borderRightWidth: 0.5,
-    borderRightColor: "#999999",
   },
   sideA: {
     width: 72,
     alignItems: "center",
     justifyContent: "center",
-    borderRightWidth: 0.5,
-    borderRightColor: "#999999",
   },
   sideAText: {
     width: 108,
     textAlign: "center",
     fontSize: 8,
+    color: BRAND_COLOR,
     transform: "rotate(90deg)",
   },
   center: {
     width: 180,
     alignItems: "center",
     textAlign: "center",
-    borderRightWidth: 0.5,
-    borderRightColor: "#999999",
+    justifyContent: "flex-start",
+    paddingTop: 4,
   },
   sideB: {
     width: 72,
-    borderRightWidth: 0.5,
-    borderRightColor: "#999999",
   },
   overlap: {
     width: 108,
   },
-  panelHeading: {
+  handcrafted: {
     marginBottom: 5,
-    fontSize: 7,
-    fontWeight: 700,
-    textTransform: "uppercase",
-    letterSpacing: 0.7,
+    fontSize: 9,
+    fontStyle: "italic",
+    textAlign: "center",
+    color: BRAND_COLOR,
   },
   ingredientsText: {
     fontSize: 8,
     lineHeight: 1.35,
+    textAlign: "center",
+  },
+  ingredientsWeight: {
+    marginTop: 6,
+    fontSize: 9,
+    textAlign: "center",
+    color: BRAND_COLOR,
   },
   productName: {
     fontSize: 15,
     fontWeight: 700,
     marginBottom: 5,
+    color: BRAND_COLOR,
   },
-  netWeight: {
-    fontSize: 9,
+  brandDivider: {
+    marginBottom: 3,
+    position: "relative",
+    width: 164,
+    height: 16,
+  },
+  brandDots: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+  },
+  beanImage: {
+    position: "absolute",
+    top: 0,
+    left: 73,
+    width: 18,
+    height: 16,
+    objectFit: "contain",
   },
   emptyText: {
     fontSize: 8,
     color: "#666666",
   },
 });
+
+function BrandingSeparator() {
+  const leftDots = [5, 15, 25, 35, 45, 55, 65];
+  const rightDots = [99, 109, 119, 129, 139, 149, 159];
+
+  return (
+    <View style={styles.brandDivider}>
+      <Svg width={164} height={14} viewBox="0 0 164 14" style={styles.brandDots}>
+        {[...leftDots, ...rightDots].map((x) => (
+          <Circle key={x} cx={x} cy={7} r={2} fill={BRAND_COLOR} />
+        ))}
+      </Svg>
+      <Image
+        src="/coffee_beans.png"
+        alt="Coffee bean trio"
+        style={styles.beanImage}
+      />
+    </View>
+  );
+}
+
+function CurvedBranding() {
+  const lines = [
+    { text: "Morning Rituals", centerY: 22 },
+    { text: "Coffee Soap", centerY: 36 },
+  ];
+  const fontSize = 14;
+  const letterSpacing = 0.2;
+  const glyphWidth = (character) => {
+    if (character === " ") return 0.3;
+    if ("ilI".includes(character)) return 0.3;
+    if ("frt".includes(character)) return 0.38;
+    if ("mwMW".includes(character)) return 0.85;
+    if (/[A-Z]/.test(character)) return 0.68;
+    return 0.54;
+  };
+
+  return (
+    <Svg width={164} height={51} viewBox="0 0 164 51">
+      {lines.flatMap(({ text, centerY }) => {
+        const characters = Array.from(text);
+        const advances = characters.map((character) => glyphWidth(character) * fontSize + letterSpacing);
+        const lineWidth = advances.reduce((total, advance) => total + advance, 0) - letterSpacing;
+        let cursor = (164 - lineWidth) / 2;
+
+        return characters.map((character, index) => {
+          const x = cursor + advances[index] / 2;
+          cursor += advances[index];
+          const offset = x - 82;
+          const y = centerY + 0.003 * offset * offset;
+          const angle = Math.atan(0.006 * offset) * (180 / Math.PI);
+
+          return [-0.3, 0, 0.3].map((offsetX) => {
+            const glyphX = x + offsetX;
+            return (
+              <SvgText
+                key={`${text}-${index}-${offsetX}`}
+                x={glyphX}
+                y={y}
+                fill={BRAND_COLOR}
+                fontFamily="Helvetica-Bold"
+                fontSize={fontSize}
+                fontWeight="bold"
+                stroke={BRAND_COLOR}
+                strokeWidth={0.6}
+                textAnchor="middle"
+                transform={`rotate(${angle} ${glyphX} ${y})`}
+              >
+                {character}
+              </SvgText>
+            );
+          });
+        });
+      })}
+    </Svg>
+  );
+}
 
 /**
  * @typedef {Object} SoapLabelItem
@@ -121,22 +223,24 @@ function SoapLabelPDF({ items = [] }) {
               wrap={false}
             >
               <View style={[styles.panel, styles.ingredients]}>
-                <Text style={styles.panelHeading}>Ingredients</Text>
+                <Text style={styles.handcrafted}>— Handcrafted with —</Text>
                 <Text style={styles.ingredientsText}>
                   {item.Ingredients ?? item.ingredients ?? "Ingredients not provided"}
+                </Text>
+                <Text style={styles.ingredientsWeight}>
+                  {item.NetWeight ?? item.netWeight
+                    ? `— Weight ${item.NetWeight ?? item.netWeight} oz —`
+                    : ""}
                 </Text>
               </View>
               <View style={[styles.panel, styles.sideA]}>
                 <Text style={styles.sideAText}>morningritualsoap.com</Text>
               </View>
               <View style={[styles.panel, styles.center]}>
+                <CurvedBranding />
+                <BrandingSeparator />
                 <Text style={styles.productName}>
                   {item.ProductName ?? item.name ?? "Soap"}
-                </Text>
-                <Text style={styles.netWeight}>
-                  {item.NetWeight ?? item.netWeight
-                    ? `${item.NetWeight ?? item.netWeight} oz`
-                    : ""}
                 </Text>
               </View>
               <View style={[styles.panel, styles.sideB]} />

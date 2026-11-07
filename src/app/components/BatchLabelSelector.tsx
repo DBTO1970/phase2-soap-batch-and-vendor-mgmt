@@ -38,11 +38,14 @@ export default function BatchLabelSelector<TBatch extends BatchLabelBatch>({
   );
   const [weights, setWeights] = useState<Record<string, string>>(() =>
     Object.fromEntries(
-      batches.flatMap((batch) => {
+      batches.map((batch) => {
         const weight = batch.NetWeight;
-        return weight !== undefined && weight !== "" && Number(weight) > 0
-          ? [[String(batch.id), String(weight)]]
-          : [];
+        return [
+          String(batch.id),
+          weight !== undefined && weight !== "" && Number(weight) > 0
+            ? String(weight)
+            : "4",
+        ];
       }),
     ),
   );

@@ -45,8 +45,6 @@ const styles = StyleSheet.create({
     height: 108,
     flexDirection: "row",
     marginBottom: 12,
-    borderWidth: 0.75,
-    borderColor: BRAND_COLOR,
     position: "relative",
   },
   labelBackground: {
@@ -55,7 +53,16 @@ const styles = StyleSheet.create({
     left: 0.75,
     width: 610.5,
     height: 106.5,
-    objectFit: "cover",
+    objectFit: "fill",
+  },
+  labelBorder: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    width: 612,
+    height: 108,
+    borderWidth: 0.75,
+    borderColor: BRAND_COLOR,
   },
   panel: {
     height: "100%",
@@ -252,7 +259,7 @@ function SoapLabelPDF({ items = [] }) {
             >
               {item.useBackground !== false && (
                 <Image
-                  src="/plant_motif_bg.png"
+                  src="/plant_motif_bg9.png"
                   alt=""
                   style={styles.labelBackground}
                 />
@@ -283,6 +290,7 @@ function SoapLabelPDF({ items = [] }) {
               </View>
               <View style={[styles.panel, styles.sideB]} />
               <View style={[styles.panel, styles.overlap]} />
+              <View style={styles.labelBorder} />
             </View>
           ))}
           {items.length === 0 && (

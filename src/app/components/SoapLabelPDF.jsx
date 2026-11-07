@@ -79,18 +79,24 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   sideAText: {
-    width: 108,
     textAlign: "center",
     fontSize: 8,
     color: BRAND_COLOR,
-    transform: "rotate(90deg)",
+  },
+  website: {
+    fontFamily: "EB Garamond",
+    marginTop: 4,
+    fontSize: 8,
+    textAlign: "center",
+    color: NAME_COLOR,
   },
   center: {
     width: 180,
     alignItems: "center",
     textAlign: "center",
     justifyContent: "flex-start",
-    paddingTop: 4,
+    position: "relative",
+    paddingTop: 0,
   },
   sideB: {
     width: 72,
@@ -122,27 +128,38 @@ const styles = StyleSheet.create({
   },
   productName: {
     fontFamily: "EB Garamond",
-    fontSize: 15,
     fontWeight: 700,
-    marginTop: 4,
-    marginBottom: 5,
+    position: "absolute",
+    left: 8,
+    right: 8,
+    bottom: 4,
+    maxLines: 2,
+    textAlign: "center",
+    paddingHorizontal: 10,
     color: NAME_COLOR,
+    flexShrink: 0,
+  },
+  curvedBranding: {
+    position: "absolute",
+    top: 4,
+    left: 8,
   },
   brandDivider: {
-    marginBottom: -11,
     position: "relative",
-    width: 164,
+    top: 59,
+    alignSelf: "center",
+    width: 180,
     height: 26,
   },
   brandDots: {
     position: "absolute",
     top: 1,
-    left: 0,
+    left: 8,
   },
   beanImage: {
     position: "absolute",
     top: 1,
-    left: 73,
+    left: 81,
     width: 18,
     height: 16,
     objectFit: "contain",
@@ -190,7 +207,7 @@ function CurvedBranding() {
   };
 
   return (
-    <Svg width={164} height={56} viewBox="0 0 164 56">
+    <Svg width={164} height={56} viewBox="0 0 164 56" style={styles.curvedBranding}>
       {lines.flatMap(({ text, centerY }) => {
         const characters = Array.from(text);
         const advances = characters.map((character) => glyphWidth(character) * fontSize + letterSpacing);
@@ -230,6 +247,12 @@ function CurvedBranding() {
   );
 }
 
+function getProductNameFontSize(name) {
+  if (name.length > 42) return 10;
+  if (name.length > 21) return 12;
+  return 15;
+}
+
 /**
  * @typedef {Object} SoapLabelItem
  * @property {string | number} id
@@ -260,7 +283,7 @@ function SoapLabelPDF({ items = [] }) {
             >
               {item.useBackground !== false && (
                 <Image
-                  src="/plant_motif_bg9.png"
+                  src="/plant_motif_bg12.png"
                   alt=""
                   style={styles.labelBackground}
                 />
@@ -278,14 +301,18 @@ function SoapLabelPDF({ items = [] }) {
                     ? `— Weight ${item.NetWeight ?? item.netWeight} oz —`
                     : ""}
                 </Text>
+                <Text style={styles.website}>morningritualsoap.com</Text>
               </View>
-              <View style={[styles.panel, styles.sideA]}>
-                <Text style={styles.sideAText}>morningritualsoap.com</Text>
-              </View>
+              <View style={[styles.panel, styles.sideA]} />
               <View style={[styles.panel, styles.center]}>
                 <CurvedBranding />
                 <BrandingSeparator />
-                <Text style={styles.productName}>
+                <Text
+                  style={[
+                    styles.productName,
+                    { fontSize: getProductNameFontSize(item.ProductName ?? item.name ?? "Soap") },
+                  ]}
+                >
                   {item.ProductName ?? item.name ?? "Soap"}
                 </Text>
               </View>

@@ -16,7 +16,7 @@ type BatchEntry = {
 };
 
 const BASE_ADDITIONAL_INGREDIENTS =
-  'Olive Oil, Coconut Oil, Castor Oil, Avacado Oil, Shea Butter, Cocoa Butter,';
+  'Roasted Coffee Infused Olive Oil, Coconut Oil, Castor Oil, Avacado Oil, Shea Butter, Cocoa Butter,';
 
 export default function AdminBatches() {
   const [batches, setBatches] = useState<SoapBatch[]>([]);

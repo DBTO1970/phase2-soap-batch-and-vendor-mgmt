@@ -24,7 +24,7 @@ export default function AboutPage() {
         </div>
         <p className="text-xl text-gray-700 leading-relaxed">
           <span className="font-bold text-blue-600">Morning Rituals Soap</span> is 
-          more than just a bar of soap—it's a daily ritual that invigorates your senses 
+          more than just a bar of soap—it&apos;s a daily ritual that invigorates your senses 
           and starts your day on the right note. Our handmade soaps are not only gentle 
           on your skin but also offer a luxurious and indulgent cleansing experience. 
           Infused with coffee oils, our soaps can enhance blood circulation and provide 
@@ -45,12 +45,12 @@ export default function AboutPage() {
           "/IMG_5588.jpg",
           "/IMG_5591.jpg",
         ].map((src, index) => (
-          <div key={index} className="relative aspect-square overflow-hidden rounded-xl shadow-sm hover:shadow-lg transition-shadow cursor-pointer">
+          <div key={index} className="relative aspect-square overflow-hidden rounded-xl shadow-sm hover:shadow-lg transition-shadow">
             <Image
               src={src}
               alt={`Morning Rituals Soap variety ${index + 1}`}
               fill
-              className="object-cover hover:scale-105 transition-transform duration-300"
+              className="object-cover"
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 unoptimized
             />

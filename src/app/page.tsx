@@ -41,7 +41,7 @@ export default function Home() {
         <div className="order-2 md:order-1 flex justify-center md:justify-start">
           <div className="relative w-full max-w-[350px] aspect-square">
             <Image
-              src="/IMG_7606.jpg"
+              src="/IMG_0771.jpg"
               alt="Soap bar with natural elements"
               fill
               className="rounded-2xl object-cover"
@@ -71,13 +71,16 @@ export default function Home() {
           </ul>
         </div>
         <div className="flex justify-center md:justify-end">
-          <div className="relative w-full max-w-[300px] aspect-[3/4]">
+          <div className="relative w-full max-w-[300px] aspect-[4/3]">
             <Image
-              src="/IMG_7598.jpg"
+              src="/IMG_0766.jpg"
               alt="Soap display"
-              fill
-              className="rounded-2xl object-cover"
+              // fill
+              className=""
+              width={250}
+              height={370}
               sizes="(max-width: 768px) 100vw, 30vw"
+              style={{ borderRadius: '16px', objectFit: 'cover' }}
               unoptimized
             />
           </div>
